@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "dev",
+			"problemMatcher": [],
+			"label": "npm:dev",
+			"detail": "concurrently \"tsc -w -preserveWatchOutput\" \"wait-on dist/index.js && NODE_ENV=development nodemon dist/index.js\""
+		},
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "btsc",
+			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "watch:debug",
+			"label": "watch:debug",
+			"problemMatcher": []
+		}
+	]
+}
