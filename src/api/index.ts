@@ -52,8 +52,13 @@ let boardInfo: any = null
   //   ]
 
   const items2 = boardInfo
-  console.log(`items2`, items2)
+  // console.log(`items2`, items2)
 
+  term.fullscreen(true)
+  term.on('resize', () => {
+    console.log('resized. should re-init terminal with cached list values')
+    term.reset
+  })
   term.gridMenu(items2, function (error: any, response: any) {
     term('\n').eraseLineAfter.green('#%s selected: %s (%s,%s)\n', response.selectedIndex, response.selectedText, response.x, response.y)
     process.exit()
