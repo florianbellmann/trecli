@@ -13,7 +13,8 @@
 // export loadBoard()
 // switchboards
 
-// const cli = require("./cli/cli-interface")
+const api = require('./api/index')
+// const cli = require('./cli/cli-interface')
 
 // console.log('debugging!')
 // var x = 5
