@@ -40,7 +40,7 @@ let boardInfo: any = null
     listcards = listcards.map((l: any) => l.name)
     return listcards
   })
-  console.log(`cardnames`, cardnames)
+  // console.log(`cardnames`, cardnames)
   boardInfo = cardnames
 
   // var items = fs.readdirSync(process.cwd())
@@ -60,8 +60,21 @@ let boardInfo: any = null
     term.reset
   })
   term.gridMenu(items2, function (error: any, response: any) {
-    term('\n').eraseLineAfter.green('#%s selected: %s (%s,%s)\n', response.selectedIndex, response.selectedText, response.x, response.y)
-    process.exit()
+    term('\n').eraseLineAfter.green('#%s selected: %s (%s,%s), %s, %s\n', response.selectedIndex, response.selectedText, response.x, response.y, response.key, response.id)
+    term.clear()
+    term.singleColumnMenu(['title', 'desc', 'due'], (error: any, res: any) => {
+      console.log(`error,res`, error, res)
+
+      switch (res.selectedText) {
+        case 'title':
+          // readline
+          break
+
+        default:
+          break
+      }
+    })
+    // process.exit()
   })
 })()
 
