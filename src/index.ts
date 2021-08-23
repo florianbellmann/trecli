@@ -1,24 +1,9 @@
-/**
- * cli interface
- * connect terminal-kit input keys with functions in this file
- *
- *
- * export loadboard
- * reload board
- * addcard
- *
- */
-// cli interface
+import { CliHost } from './cli-host'
 
-// export loadBoard()
-// switchboards
+async function bootstrap() {
+  const cliHost = new CliHost()
+  await cliHost.init()
+  await cliHost.loadList()
+}
 
-const api = require('./api/index')
-// const cli = require('./cli/cli-interface')
-
-// console.log('debugging!')
-// var x = 5
-
-// var y = x * x
-
-// ;oll
+bootstrap()
