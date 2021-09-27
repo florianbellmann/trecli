@@ -639,7 +639,7 @@ es-to-primitive@^1.2.1:
 
 es6-promise@~3.0.2:
   version "3.0.2"
-  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.0.2.tgz#010d5858423a5f118979665f46486a95c6ee2bb6"
+  resolved "https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz"
   integrity sha1-AQ1YWEI6XxGJeWZfRkhqlcbuK7Y=
 
 escalade@^3.1.1:
@@ -1008,7 +1008,7 @@ husky@^6.0.0:
 
 iconv-lite@0.2.11:
   version "0.2.11"
-  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.2.11.tgz#1ce60a3a57864a292d1321ff4609ca4bb965adc8"
+  resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.2.11.tgz"
   integrity sha1-HOYKOleGSiktEyH/RgnKS7llrcg=
 
 ignore@^4.0.6:
@@ -1354,9 +1354,9 @@ ndarray@^1.0.13, ndarray@^1.0.19:
     is-buffer "^1.0.2"
 
 nextgen-events@^1.3.4:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/nextgen-events/-/nextgen-events-1.4.0.tgz#82e7201e4d8421f1cb4dcfce973c10b455fdc2be"
-  integrity sha512-bwSpShfuLg/lcRFokZvtUcrn5kumy6uRI6Jc+QWzH+bW6ZRdog7LfwAwhqeTzVfsprZgDGrctr6rO5aJhcdAfg==
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/nextgen-events/-/nextgen-events-1.5.2.tgz#72b2b6cbe6912d9be2165188d0169027e65d8ebe"
+  integrity sha512-0ZEIRQywH5Oxt2IYYufRltQg/KjXhKM7f7MHve+ZIRaKnIR1PPYEXAl2WBmej5Sf0Qh2GgE/21sMRZVuOyxLzw==
 
 node-bitmap@0.0.1:
   version "0.0.1"
@@ -1380,7 +1380,7 @@ normalize-package-data@^2.5.0:
 
 object-assign@~4.1.0:
   version "4.1.1"
-  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
+  resolved "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
 object-inspect@^1.10.3:
@@ -1524,7 +1524,7 @@ punycode@^2.1.0:
 
 qs@1.2.0:
   version "1.2.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-1.2.0.tgz#ed079be28682147e6fd9a34cc2b0c1e0ec6453ee"
+  resolved "https://registry.npmjs.org/qs/-/qs-1.2.0.tgz"
   integrity sha1-7Qeb4oaCFH5v2aNMwrDB4OxkU+4=
 
 queue-microtask@^1.2.2:
@@ -1594,7 +1594,7 @@ resolve@^1.10.0:
 
 restler@~3.3.0:
   version "3.3.0"
-  resolved "https://registry.yarnpkg.com/restler/-/restler-3.3.0.tgz#f93a59b5e1bc2c5ad0c2b973f78129b2181b6076"
+  resolved "https://registry.npmjs.org/restler/-/restler-3.3.0.tgz"
   integrity sha1-+TpZteG8LFrQwrlz94EpshgbYHY=
   dependencies:
     iconv-lite "0.2.11"
@@ -1640,7 +1640,7 @@ safe-buffer@~5.2.0:
 
 sax@0.5.x:
   version "0.5.8"
-  resolved "https://registry.yarnpkg.com/sax/-/sax-0.5.8.tgz#d472db228eb331c2506b0e8c15524adb939d12c1"
+  resolved "https://registry.npmjs.org/sax/-/sax-0.5.8.tgz"
   integrity sha1-1HLbIo6zMcJQaw6MFVJK25OdEsE=
 
 "semver@2 || 3 || 4 || 5":
@@ -1755,9 +1755,9 @@ stack-trace@0.0.x:
   integrity sha1-VHxws0fo0ytOEI6hoqFZ5f3eGcA=
 
 string-kit@^0.12.5:
-  version "0.12.5"
-  resolved "https://registry.yarnpkg.com/string-kit/-/string-kit-0.12.5.tgz#e7f646e7740e54b7ecae6cf67b73bb616aa16652"
-  integrity sha512-aB7yK0RgOx3SElEfQ6lZu2xS5hWr4ToJispiy+djJ4yh3f2zaTMCm44ZrHZnN1RiQQCLfpa5Btz2bishyBm8IQ==
+  version "0.12.8"
+  resolved "https://registry.yarnpkg.com/string-kit/-/string-kit-0.12.8.tgz#6b35b3d873105c4b194757ecd66b0723ffb914af"
+  integrity sha512-9UYXBbe/reAZI6cKiaNC7zEzdmA91Ih5/lVmbPGoMssSWZfqVcQvqAMlL0dTdMn+a7XCXBe8zV4BVopXlf+Aaw==
 
 string-width@^4.1.0, string-width@^4.2.0:
   version "4.2.2"
@@ -1845,7 +1845,7 @@ table@^6.0.9:
 
 "terminal-kit@https://github.com/florianjuesten/terminal-kit.git":
   version "2.1.3"
-  resolved "https://github.com/florianjuesten/terminal-kit.git#c179406ee9daa2d85a4cc8b2515d110c95f21c29"
+  resolved "https://github.com/florianjuesten/terminal-kit.git#41feb82fabc97b5e82ba2b2a5aa5878c5221ac16"
   dependencies:
     "@cronvel/get-pixels" "^3.4.0"
     chroma-js "^2.1.1"
@@ -1885,7 +1885,7 @@ tree-kit@^0.7.0:
 
 trello@0.10.0:
   version "0.10.0"
-  resolved "https://registry.yarnpkg.com/trello/-/trello-0.10.0.tgz#01b5168575344b5d14f8fa881b25f48528694828"
+  resolved "https://registry.npmjs.org/trello/-/trello-0.10.0.tgz"
   integrity sha512-l2uDieuUkFU+qlZG1dtu11Uzg5yKZLl+NjVCAQWumaHnclH46cTuBEyHjnz7kPqZDNoGf7qzcsln0BOVjrFajw==
   dependencies:
     es6-promise "~3.0.2"
@@ -2065,7 +2065,7 @@ wrappy@1:
 
 xml2js@0.4.0:
   version "0.4.0"
-  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.0.tgz#124fc4114b4129c810800ecb2ac86cf25462cb9a"
+  resolved "https://registry.npmjs.org/xml2js/-/xml2js-0.4.0.tgz"
   integrity sha1-Ek/EEUtBKcgQgA7LKshs8lRiy5o=
   dependencies:
     sax "0.5.x"
@@ -2073,7 +2073,7 @@ xml2js@0.4.0:
 
 xmlbuilder@>=0.4.2:
   version "15.1.1"
-  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-15.1.1.tgz#9dcdce49eea66d8d10b42cae94a79c3c8d0c2ec5"
+  resolved "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-15.1.1.tgz"
   integrity sha512-yMqGBqtXyeN1e3TGYvgNgDVZ3j84W4cwkOXQswghol6APgZWaff9lnbvN7MHYJOiXsvGPXtjTYJEiC9J2wv9Eg==
 
 y18n@^5.0.5:
@@ -2088,7 +2088,7 @@ yallist@^4.0.0:
 
 yaml@0.2.3:
   version "0.2.3"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-0.2.3.tgz#b5450e92e76ef36b5dd24e3660091ebaeef3e5c7"
+  resolved "https://registry.npmjs.org/yaml/-/yaml-0.2.3.tgz"
   integrity sha1-tUUOkudu82td0k42YAkeuu7z5cc=
 
 yargs-parser@^20.2.2:
