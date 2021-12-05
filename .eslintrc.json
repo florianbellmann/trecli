@@ -50,7 +50,7 @@
     "no-loop-func": "warn",
     "no-invalid-this": "warn",
     "no-return-assign": "warn",
-    "no-warning-comments": "warn",
+    "no-warning-comments": "off",
     "vars-on-top": "warn",
     "no-return-await": "warn",
     "no-param-reassign": "warn",

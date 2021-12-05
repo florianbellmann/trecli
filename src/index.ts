@@ -1,9 +1,11 @@
-import { CliHost } from './cli-host'
+import { main } from './app'
 
-async function bootstrap() {
-  const cliHost = new CliHost()
-  await cliHost.init()
-  await cliHost.loadList()
+function bootstrap() {
+  try {
+    main()
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 bootstrap()
