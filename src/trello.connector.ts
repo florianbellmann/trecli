@@ -89,6 +89,11 @@ export class TrelloConnector {
     throw new Error('Method not implemented.')
   }
 
+  public async unArchiveCard(): Promise<void> {
+    // TODO: Implement this function
+    throw new Error('Method not implemented.')
+  }
+
   public async moveCardToTomorrow(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
@@ -102,11 +107,31 @@ export class TrelloConnector {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
-  public async switchList(): Promise<void> {
+  public async newCard(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
-  public async newCard(): Promise<void> {
+  public async unarchiveCard(): Promise<void> {
+    // TODO: Implement this function
+    throw new Error('Method not implemented.')
+  }
+  public async changeTitle(): Promise<void> {
+    // TODO: Implement this function
+    throw new Error('Method not implemented.')
+  }
+  public async switchListRight(): Promise<void> {
+    // TODO: Implement this function
+    throw new Error('Method not implemented.')
+  }
+  public async switchListLeft(): Promise<void> {
+    // TODO: Implement this function
+    throw new Error('Method not implemented.')
+  }
+  public async cardDown(): Promise<void> {
+    // TODO: Implement this function
+    throw new Error('Method not implemented.')
+  }
+  public async cardUp(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }

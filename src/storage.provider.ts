@@ -1,22 +1,20 @@
+import { Action } from './action.handler'
 import { Board, Card, List } from './trello.connector'
 
-export interface Action {
-  id: string
-}
-
 export class StorageProvider {
-  private activeBoard: Board
+  private currentBoard: Board
   private currentLists: List[]
-  private activeList: List
-  public activeCards: Card[]
+  private currentList: List
+  public currentCards: Card[]
+  public currentCard: Card
 
   public currentAction: Action
 
-  public setActiveBoard(board: Board) {
-    this.activeBoard = board
+  public setCurrentBoard(board: Board) {
+    this.currentBoard = board
   }
-  public getActiveBoard(): Board {
-    return this.activeBoard
+  public getCurrentBoard(): Board {
+    return this.currentBoard
   }
 
   public setCurrentLists(lists: List[]) {
@@ -26,18 +24,18 @@ export class StorageProvider {
     return this.currentLists
   }
 
-  public setActiveList(list: List) {
-    this.activeList = list
+  public setCurrentList(list: List) {
+    this.currentList = list
   }
-  public getActiveList(): List {
-    return this.activeList
+  public getCurrentList(): List {
+    return this.currentList
   }
 
-  public setActiveCards(cards: Card[]) {
-    this.activeCards = cards
+  public setCurrentCards(cards: Card[]) {
+    this.currentCards = cards
   }
-  public getActiveCards(): Card[] {
-    return this.activeCards
+  public getCurrentCards(): Card[] {
+    return this.currentCards
   }
 
   public setCurrentAction(action: Action) {
@@ -45,6 +43,13 @@ export class StorageProvider {
   }
   public getCurrentAction(): Action {
     return this.currentAction
+  }
+
+  public setCurrentCard(card: Card) {
+    this.currentCard = card
+  }
+  public getCurrentCard(): Card {
+    return this.currentCard
   }
 
   // TODO: Implement storing

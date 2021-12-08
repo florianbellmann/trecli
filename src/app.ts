@@ -11,28 +11,32 @@ export const cliWrapper = new CLIWrapper()
 
 export const main = async () => {
   const initialBoard = await trelloConnector.getBoardByName('Website')
-  storageProvider.setActiveBoard(initialBoard)
+  storageProvider.setCurrentBoard(initialBoard)
 
   const initialLists = await trelloConnector.getListsOnBoard(initialBoard.id)
+  storageProvider.setCurrentLists(initialLists)
 
   const startingList = initialLists[0]
+  storageProvider.setCurrentList(startingList)
 
   const initialCards = await trelloConnector.getCardsOnList(startingList.id)
+  storageProvider.setCurrentCards(initialCards)
 
-  cliWrapper.startColumnMenu(initialCards.map((card) => card.name))
-  /**
-   * PROGRAMM LIFECYCLE
-   *
-   * init trello
-   * load list cards
-   *
-   * 1 term display single column menu
-   * 2 choose things
-   * 3 do action
-   *
-   * loop 1-3
-   *
-   *
-   *
-   */
+  const initialCard = initialCards[0]
+  storageProvider.setCurrentCard(initialCard)
+
+  let key = null
+
+  while (key !== 'q') {
+    // eslint-disable-next-line no-await-in-loop
+    const singleColumnMenuResponse = await cliWrapper.startColumnMenu(initialCards.map((card) => card.name))
+    console.log(`key`, singleColumnMenuResponse)
+    if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '') {
+      const action = actionHandler.getActionByKey(singleColumnMenuResponse.key)
+      // actionHandler.executeAction(action)
+    }
+    key = singleColumnMenuResponse.key
+  }
+
+  process.exit(0)
 }
