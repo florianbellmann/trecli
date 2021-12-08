@@ -84,37 +84,198 @@ export class TrelloConnector {
     this._trello = new Trello(process.env.API_KEY, process.env.API_TOKEN)
   }
 
-  public async archiveCard() {
+  public async archiveCard(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
 
-  public async moveCardToTomorrow() {
+  public async moveCardToTomorrow(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
 
-  public async openDetailViewOfCard() {
+  public async openDetailViewOfCard(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
-  public async switchBoard() {
+  public async switchBoard(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
-  public async switchList() {
+  public async switchList(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
-  public async newCard() {
+  public async newCard(): Promise<void> {
     // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
 
-  #getBoardByName() {
-    this._boards = await this._trello.getBoards(process.env.MEMBER_ID)
-
-    // TODO: remove test board/list for real one
-    const websiteBoard = this._boards.find((b: any) => b.name == 'Website')
+  public async getListsOnBoard(boardId: string): Promise<List[]> {
+    const lists = await this._trello.getListsOnBoard(boardId)
+    return lists
   }
+
+  public async getBoardByName(boardName: string): Promise<Board> {
+    const boards = await this._trello.getBoards(process.env.MEMBER_ID)
+    const namedBoard = boards.find((b: any) => b.name == boardName)
+
+    return namedBoard as any
+  }
+
+  public async getCardsOnList(listId: string): Promise<Card[]> {
+    const cards = await this._trello.getCardsOnList(listId)
+    return cards
+  }
+}
+
+export interface Board {
+  name: string
+  desc: string
+  descData: null
+  closed: boolean
+  dateClosed: null
+  idOrganization: string
+  idEnterprise: null
+  limits: null
+  pinned: null
+  shortLink: string
+  powerUps: any[]
+  dateLastActivity: string
+  idTags: any[]
+  datePluginDisable: null
+  creationMethod: null
+  ixUpdate: null
+  enterpriseOwned: boolean
+  idBoardSource: null
+  idMemberCreator: string
+  id: string
+  starred: boolean
+  url: string
+  prefs: Prefs
+  subscribed: boolean
+  labelNames: LabelNames
+  dateLastView: string
+  shortUrl: string
+  templateGallery: null
+  premiumFeatures: string[]
+  memberships: Membership[]
+}
+
+export interface LabelNames {
+  green: string
+  yellow: string
+  orange: string
+  red: string
+  purple: string
+  blue: string
+  sky: string
+  lime: string
+  pink: string
+  black: string
+}
+
+export interface Membership {
+  id: string
+  idMember: string
+  memberType: string
+  unconfirmed: boolean
+  deactivated: boolean
+}
+
+export interface Prefs {
+  permissionLevel: string
+  hideVotes: boolean
+  voting: string
+  comments: string
+  invitations: string
+  selfJoin: boolean
+  cardCovers: boolean
+  isTemplate: boolean
+  cardAging: string
+  calendarFeedEnabled: boolean
+  isPluginHeaderShortcutsEnabled: boolean
+  enabledPluginBoardButtons: any[]
+  background: string
+  backgroundImage: string
+  backgroundImageScaled: any[]
+  backgroundTile: boolean
+  backgroundBrightness: string
+  backgroundBottomColor: string
+  backgroundTopColor: string
+  canBePublic: boolean
+  canBeEnterprise: boolean
+  canBeOrg: boolean
+  canBePrivate: boolean
+  canInvite: boolean
+}
+
+export interface List {
+  id: '60b336baa655e589729705e1'
+  name: 'header reihe 4'
+  closed: false
+  pos: 262143
+  softLimit: null
+  idBoard: '5d3db4e32513418a9f7f5513'
+  subscribed: false
+}
+
+export interface Card {
+  id: string
+  checkItemStates: null
+  closed: boolean
+  dateLastActivity: string
+  desc: string
+  descData: null
+  dueReminder: null
+  idBoard: string
+  idList: string
+  idMembersVoted: any[]
+  idShort: number
+  idAttachmentCover: null
+  idLabels: any[]
+  manualCoverAttachment: boolean
+  name: string
+  pos: number
+  shortLink: string
+  isTemplate: boolean
+  cardRole: null
+  badges: Badges
+  dueComplete: boolean
+  due: null
+  idChecklists: any[]
+  idMembers: any[]
+  labels: any[]
+  shortUrl: string
+  start: null
+  subscribed: boolean
+  url: string
+  cover: Cover
+}
+
+export interface Badges {
+  attachmentsByType: any[]
+  location: boolean
+  votes: number
+  viewingMemberVoted: boolean
+  subscribed: boolean
+  fogbugz: string
+  checkItems: number
+  checkItemsChecked: number
+  checkItemsEarliestDue: null
+  comments: number
+  attachments: number
+  description: boolean
+  due: null
+  dueComplete: boolean
+  start: null
+}
+
+export interface Cover {
+  idAttachment: null
+  color: null
+  idUploadedBackground: null
+  size: string
+  brightness: string
+  idPlugin: null
 }
