@@ -28,4 +28,9 @@ export class CLIWrapper {
       })
     })
   }
+
+  public refresh(): void {
+    term.clear()
+    // TODO: restart loop
+  }
 }

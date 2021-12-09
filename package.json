@@ -12,8 +12,7 @@
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.0",
     "terminal-kit": "https://github.com/florianjuesten/terminal-kit.git",
-    "trello": "0.10.0",
-    "winston": "^3.3.3"
+    "trello": "0.10.0"
   },
   "devDependencies": {
     "@types/eslint": "^7.2.12",

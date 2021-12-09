@@ -33,7 +33,7 @@ export const main = async () => {
     console.log(`key`, singleColumnMenuResponse)
     if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '') {
       const action = actionHandler.getActionByKey(singleColumnMenuResponse.key)
-      // actionHandler.executeAction(action)
+      actionHandler.executeAction(action)
     }
     key = singleColumnMenuResponse.key
   }

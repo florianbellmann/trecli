@@ -59,6 +59,7 @@ export interface TrelloAPI {
 }
 
 import dotenv from 'dotenv'
+import { cliWrapper, storageProvider } from './app'
 dotenv.config()
 
 enum Endpoint {
@@ -85,13 +86,12 @@ export class TrelloConnector {
   }
 
   public async archiveCard(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+    // TODO: should I just make all of these calls async? So no need to await?
+    await this._trello.updateCard(storageProvider.currentCard.id, 'closed', true)
   }
 
   public async unArchiveCard(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+    await this._trello.updateCard(storageProvider.currentCard.id, 'closed', false)
   }
 
   public async moveCardToTomorrow(): Promise<void> {
@@ -105,27 +105,37 @@ export class TrelloConnector {
   }
   public async switchBoard(): Promise<void> {
     // TODO: Implement this function
+    // re iterate startup function and restart loop
+
     throw new Error('Method not implemented.')
   }
-  public async newCard(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+  public async newCard(name: string, listId: string, desc?: string): Promise<void> {
+    await this._trello.addCard(name, desc, listId)
   }
-  public async unarchiveCard(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
-  }
-  public async changeTitle(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+  public async changeTitle(newTitle: string): Promise<void> {
+    await this._trello.updateCard(storageProvider.currentCard.id, 'title', newTitle)
   }
   public async switchListRight(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+    const currentLists = storageProvider.getCurrentLists()
+    const currentList = storageProvider.getCurrentList()
+    const currentListIndex = currentLists.findIndex((list) => list.id === currentList.id)
+
+    const newIndex = currentListIndex + 1 >= currentLists.length ? 0 : currentListIndex + 1
+    const newList = currentLists[newIndex]
+    storageProvider.setCurrentList(newList)
+
+    cliWrapper.refresh()
   }
   public async switchListLeft(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+    const currentLists = storageProvider.getCurrentLists()
+    const currentList = storageProvider.getCurrentList()
+    const currentListIndex = currentLists.findIndex((list) => list.id === currentList.id)
+
+    const newIndex = currentListIndex - 1 < 0 ? currentLists.length - 1 : currentListIndex - 1
+    const newList = currentLists[newIndex]
+    storageProvider.setCurrentList(newList)
+
+    cliWrapper.refresh()
   }
   public async cardDown(): Promise<void> {
     // TODO: Implement this function

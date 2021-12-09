@@ -53,7 +53,7 @@ export class ActionHandler {
         await trelloConnector.archiveCard()
         break
       case ActionType.Unarchive:
-        await trelloConnector.unarchiveCard()
+        await trelloConnector.unArchiveCard()
         break
       case ActionType.ChangeTitle:
         await trelloConnector.changeTitle()
