@@ -1,8 +1,11 @@
-import { main } from './app'
+import { IApp } from './app'
+import { container } from './container'
+import { TYPES } from './types'
 
 function bootstrap() {
   try {
-    main()
+    const app = container.get<IApp>(TYPES.IApp)
+    app.main()
   } catch (error) {
     console.error(error)
   }

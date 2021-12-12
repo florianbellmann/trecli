@@ -8,9 +8,11 @@
   "description": "terminal trello board",
   "dependencies": {
     "dotenv": "^10.0.0",
+    "inversify": "^6.0.1",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.0",
+    "reflect-metadata": "^0.1.13",
     "terminal-kit": "https://github.com/florianjuesten/terminal-kit.git",
     "trello": "0.10.0"
   },
@@ -35,6 +37,7 @@
   "scripts": {
     "watch:debug": "nodemon --inspect=5858 -e ts,tsx --exec node -r ts-node/register ./src/index.ts",
     "dev": "concurrently \"tsc -w -preserveWatchOutput\" \"wait-on dist/index.js && NODE_ENV=development nodemon dist/index.js\"",
+    "d2": "rm -rf dist >/dev/null && tsc -w -preserveWatchOutput",
     "start": "node dist/index.js",
     "lint:watch": "nodemon --exec \"eslint -c ./.eslintrc.json src\" ./src/index.ts",
     "lint": "eslint -c ./.eslintrc.json src",

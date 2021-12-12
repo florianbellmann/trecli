@@ -1,7 +1,29 @@
-import { Action } from './action.handler'
-import { Board, Card, List } from './trello.connector'
+/* eslint-disable no-unused-vars */
+import { injectable } from 'inversify'
+import { Action } from '../actions/action.handler'
+import { Board, Card, List } from '../api/trello.connector'
 
-export class StorageProvider {
+export interface IStorageProvider {
+  currentCards: Card[]
+  currentCard: Card
+  currentAction: Action
+  setCurrentBoard(board: Board): void
+  getCurrentBoard(): Board
+  setCurrentLists(lists: List[]): void
+  getCurrentLists(): List[]
+  setCurrentList(list: List): void
+  getCurrentList(): List
+  setCurrentCards(cards: Card[]): void
+  getCurrentCards(): Card[]
+  setCurrentAction(action: Action): void
+  getCurrentAction(): Action
+  setCurrentCard(card: Card): void
+  getCurrentCard(): Card
+}
+
+// TODO: rename me!
+@injectable()
+export class StorageProvider implements IStorageProvider {
   private currentBoard: Board
   private currentLists: List[]
   private currentList: List

@@ -1,42 +1,50 @@
-import { ActionHandler } from './action.handler'
-import { CLIWrapper } from './cli.wrapper'
-import { StorageProvider } from './storage.provider'
-import { TrelloConnector } from './trello.connector'
+import { TrelloConnector } from './api/trello.connector'
+import { inject, injectable } from 'inversify'
+import { TYPES } from './types'
+import { StorageProvider } from './data/storage.provider'
+import { ActionHandler } from './actions/action.handler'
+import { CliWrapper } from './cli/cli.wrapper'
 
-// globals
-export const storageProvider = new StorageProvider()
-export const trelloConnector = new TrelloConnector()
-export const actionHandler = new ActionHandler()
-export const cliWrapper = new CLIWrapper()
+export interface IApp {
+  main(): Promise<void>
+}
 
-export const main = async () => {
-  const initialBoard = await trelloConnector.getBoardByName('Website')
-  storageProvider.setCurrentBoard(initialBoard)
+@injectable()
+export class App implements IApp {
+  @inject(TYPES.ITrelloConnector) private _trelloConnector: TrelloConnector
+  @inject(TYPES.IStorageProvider) private _storageProvider: StorageProvider
+  @inject(TYPES.IActionProvider) private _actionHandler: ActionHandler
+  @inject(TYPES.ICliWrapper) private _cliWrapper: CliWrapper
 
-  const initialLists = await trelloConnector.getListsOnBoard(initialBoard.id)
-  storageProvider.setCurrentLists(initialLists)
+  async main() {
+    const initialBoard = await this._trelloConnector.getBoardByName('Website')
+    this._storageProvider.setCurrentBoard(initialBoard)
 
-  const startingList = initialLists[0]
-  storageProvider.setCurrentList(startingList)
+    const initialLists = await this._trelloConnector.getListsOnBoard(initialBoard.id)
+    this._storageProvider.setCurrentLists(initialLists)
 
-  const initialCards = await trelloConnector.getCardsOnList(startingList.id)
-  storageProvider.setCurrentCards(initialCards)
+    const startingList = initialLists[0]
+    this._storageProvider.setCurrentList(startingList)
 
-  const initialCard = initialCards[0]
-  storageProvider.setCurrentCard(initialCard)
+    const initialCards = await this._trelloConnector.getCardsOnList(startingList.id)
+    this._storageProvider.setCurrentCards(initialCards)
 
-  let key = null
+    const initialCard = initialCards[0]
+    this._storageProvider.setCurrentCard(initialCard)
 
-  while (key !== 'q') {
-    // eslint-disable-next-line no-await-in-loop
-    const singleColumnMenuResponse = await cliWrapper.startColumnMenu(initialCards.map((card) => card.name))
-    console.log(`key`, singleColumnMenuResponse)
-    if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '') {
-      const action = actionHandler.getActionByKey(singleColumnMenuResponse.key)
-      actionHandler.executeAction(action)
+    let key = null
+
+    while (key !== 'q') {
+      // eslint-disable-next-line no-await-in-loop
+      const singleColumnMenuResponse = await this._cliWrapper.startColumnMenu(initialCards.map((card) => card.name))
+      console.log(`key`, singleColumnMenuResponse)
+      if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '') {
+        const action = this._actionHandler.getActionByKey(singleColumnMenuResponse.key)
+        this._actionHandler.executeAction(action)
+      }
+      key = singleColumnMenuResponse.key
     }
-    key = singleColumnMenuResponse.key
-  }
 
-  process.exit(0)
+    process.exit(0)
+  }
 }
