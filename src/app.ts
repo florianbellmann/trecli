@@ -1,7 +1,7 @@
 import { TrelloConnector } from './api/trello.connector'
 import { inject, injectable } from 'inversify'
 import { TYPES } from './types'
-import { StorageProvider } from './data/storage.provider'
+import { GlobalStateContext } from './data/storage.provider'
 import { ActionHandler } from './actions/action.handler'
 import { CliWrapper } from './cli/cli.wrapper'
 
@@ -12,7 +12,7 @@ export interface IApp {
 @injectable()
 export class App implements IApp {
   @inject(TYPES.ITrelloConnector) private _trelloConnector: TrelloConnector
-  @inject(TYPES.IStorageProvider) private _storageProvider: StorageProvider
+  @inject(TYPES.IStorageProvider) private _storageProvider: GlobalStateContext
   @inject(TYPES.IActionProvider) private _actionHandler: ActionHandler
   @inject(TYPES.ICliWrapper) private _cliWrapper: CliWrapper
 

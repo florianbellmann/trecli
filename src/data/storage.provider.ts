@@ -23,7 +23,7 @@ export interface IStorageProvider {
 
 // TODO: rename me!
 @injectable()
-export class StorageProvider implements IStorageProvider {
+export class GlobalStateContext implements IStorageProvider {
   private currentBoard: Board
   private currentLists: List[]
   private currentList: List

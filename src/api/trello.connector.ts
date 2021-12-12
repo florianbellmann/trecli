@@ -60,7 +60,7 @@ export interface TrelloAPI {
 
 import dotenv from 'dotenv'
 import { inject, injectable } from 'inversify'
-import { StorageProvider } from '../data/storage.provider'
+import { GlobalStateContext } from '../data/storage.provider'
 import { TYPES } from '../types'
 dotenv.config()
 
@@ -100,7 +100,7 @@ export interface ITrelloConnector {
 // TODO: rename me!
 @injectable()
 export class TrelloConnector implements ITrelloConnector {
-  @inject(TYPES.IStorageProvider) private _storageProvider: StorageProvider
+  @inject(TYPES.IStorageProvider) private _storageProvider: GlobalStateContext
 
   private _trello: TrelloAPI
 
