@@ -81,8 +81,8 @@ enum RequestMethod {
 }
 
 export interface ITrelloConnector {
-  archiveCard(): Promise<void>
-  unArchiveCard(): Promise<void>
+  archiveCard(card: Card): Promise<void>
+  unArchiveCard(card: Card): Promise<void>
   moveCardToTomorrow(): Promise<void>
   openDetailViewOfCard(): Promise<void>
   switchBoard(): Promise<void>
@@ -108,13 +108,24 @@ export class TrelloConnector implements ITrelloConnector {
     this._trello = new Trello(process.env.API_KEY, process.env.API_TOKEN)
   }
 
-  public async archiveCard(): Promise<void> {
+  public async archiveCard(card: Card): Promise<void> {
     // TODO: should I just make all of these calls async? So no need to await?
-    await this._trello.updateCard(this._storageProvider.currentCard.id, 'closed', true)
+    await this._trello.updateCard(card.id, 'closed', true)
+    await this.refreshCurrentList()
   }
 
-  public async unArchiveCard(): Promise<void> {
-    await this._trello.updateCard(this._storageProvider.currentCard.id, 'closed', false)
+  // TODO: remove this method
+  private async refreshCurrentList() {
+    const newCards = await this.getCardsOnList(this._storageProvider.getCurrentList().id)
+    await this._storageProvider.setCurrentCards(newCards)
+
+    const newInitCard = newCards[0]
+    await this._storageProvider.setCurrentCard(newInitCard)
+  }
+
+  public async unArchiveCard(card: Card): Promise<void> {
+    await this._trello.updateCard(card.id, 'closed', false)
+    await this.refreshCurrentList()
   }
 
   public async moveCardToTomorrow(): Promise<void> {
@@ -134,9 +145,11 @@ export class TrelloConnector implements ITrelloConnector {
   }
   public async newCard(name: string, listId: string, desc?: string): Promise<void> {
     await this._trello.addCard(name, desc, listId)
+    await this.refreshCurrentList()
   }
   public async changeTitle(newTitle: string): Promise<void> {
     await this._trello.updateCard(this._storageProvider.currentCard.id, 'title', newTitle)
+    await this.refreshCurrentList()
   }
   public async switchListRight(): Promise<void> {
     const currentLists = this._storageProvider.getCurrentLists()
@@ -146,6 +159,7 @@ export class TrelloConnector implements ITrelloConnector {
     const newIndex = currentListIndex + 1 >= currentLists.length ? 0 : currentListIndex + 1
     const newList = currentLists[newIndex]
     this._storageProvider.setCurrentList(newList)
+    await this.refreshCurrentList()
   }
   public async switchListLeft(): Promise<void> {
     const currentLists = this._storageProvider.getCurrentLists()
@@ -155,6 +169,7 @@ export class TrelloConnector implements ITrelloConnector {
     const newIndex = currentListIndex - 1 < 0 ? currentLists.length - 1 : currentListIndex - 1
     const newList = currentLists[newIndex]
     this._storageProvider.setCurrentList(newList)
+    await this.refreshCurrentList()
   }
   public async cardDown(): Promise<void> {
     // TODO: Implement this function
