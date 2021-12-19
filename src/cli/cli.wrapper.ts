@@ -28,14 +28,21 @@ export class CliWrapper implements ICliWrapper {
 
   public startColumnMenu(items: string[]): Promise<SingleColumnMenuResponse> {
     return new Promise((resolve, reject) => {
-      term.singleColumnMenu(items, function (error: Error, response: SingleColumnMenuResponse) {
-        if (error) {
-          reject(error)
-        }
+      term.singleColumnMenu(
+        items,
+        // {
+        //   style: term.dim
+        //   selectedStyle: term.dim.blue.bgGreen
+        // },
+        function (error: Error, response: SingleColumnMenuResponse) {
+          if (error) {
+            reject(error)
+          }
 
-        term.clear()
-        resolve(response)
-      })
+          term.clear()
+          resolve(response)
+        }
+      )
     })
   }
 

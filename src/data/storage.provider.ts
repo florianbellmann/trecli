@@ -30,6 +30,15 @@ export class GlobalStateContext implements IStorageProvider {
   public currentCards: Card[]
   public currentCard: Card
 
+  // TODO: why caps?
+  public BOARD_NAMES: string[]
+
+  constructor() {
+    const boardNames = process.env.BOARD_NAMES || 'Private'
+    const boardNamesArray = boardNames.split(',')
+    this.BOARD_NAMES = boardNamesArray
+  }
+
   public currentAction: Action
 
   public setCurrentBoard(board: Board) {

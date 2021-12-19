@@ -90,8 +90,8 @@ export interface ITrelloConnector {
   changeTitle(newTitle: string): Promise<void>
   switchListRight(): Promise<void>
   switchListLeft(): Promise<void>
-  cardDown(): Promise<void>
-  cardUp(): Promise<void>
+  cardDown(card: Card, newPos: number): Promise<void>
+  cardUp(card: Card, newPos: number): Promise<void>
   getListsOnBoard(boardId: string): Promise<List[]>
   getBoardByName(boardName: string): Promise<Board>
   getCardsOnList(listId: string): Promise<Card[]>
@@ -140,8 +140,24 @@ export class TrelloConnector implements ITrelloConnector {
   public async switchBoard(): Promise<void> {
     // TODO: Implement this function
     // re iterate startup function and restart loop
+    const currentBoardIndex = this._storageProvider.BOARD_NAMES.findIndex((board) => board === this._storageProvider.getCurrentBoard().name)
+    const newBoardName = this._storageProvider.BOARD_NAMES[currentBoardIndex + 1] || this._storageProvider.BOARD_NAMES[0]
 
-    throw new Error('Method not implemented.')
+    // TODO: remove this dublicate from app.ts
+    const initialBoard = await this.getBoardByName(newBoardName)
+    this._storageProvider.setCurrentBoard(initialBoard)
+
+    const initialLists = await this.getListsOnBoard(initialBoard.id)
+    this._storageProvider.setCurrentLists(initialLists)
+
+    const startingList = initialLists[0]
+    this._storageProvider.setCurrentList(startingList)
+
+    const initialCards = await this.getCardsOnList(startingList.id)
+    this._storageProvider.setCurrentCards(initialCards)
+
+    const initialCard = initialCards[0]
+    this._storageProvider.setCurrentCard(initialCard)
   }
   public async newCard(name: string, listId: string, desc?: string): Promise<void> {
     await this._trello.addCard(name, desc, listId)
@@ -171,13 +187,13 @@ export class TrelloConnector implements ITrelloConnector {
     this._storageProvider.setCurrentList(newList)
     await this.refreshCurrentList()
   }
-  public async cardDown(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+  public async cardDown(card: Card, newPos: number): Promise<void> {
+    await this._trello.updateCard(card.id, 'pos', newPos)
+    await this.refreshCurrentList()
   }
-  public async cardUp(): Promise<void> {
-    // TODO: Implement this function
-    throw new Error('Method not implemented.')
+  public async cardUp(card: Card, newPos: number): Promise<void> {
+    await this._trello.updateCard(card.id, 'pos', newPos)
+    await this.refreshCurrentList()
   }
 
   public async getListsOnBoard(boardId: string): Promise<List[]> {

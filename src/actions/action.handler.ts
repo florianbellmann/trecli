@@ -9,8 +9,8 @@ export interface Action {
 export enum ActionType {
   SwitchListRight,
   SwitchListLeft,
-  CardDown,
-  CardUp,
+  MoveCardDown,
+  MoveCardUp,
 
   Archive,
   Unarchive,
@@ -35,10 +35,11 @@ export class ActionHandler implements IActionProvider {
         return { key: selectedKey, type: ActionType.SwitchListRight }
       case 'h':
         return { key: selectedKey, type: ActionType.SwitchListLeft }
-      case 'j':
-        return { key: selectedKey, type: ActionType.CardDown }
-      case 'k':
-        return { key: selectedKey, type: ActionType.CardUp }
+      // TODO: implement these
+      // case 'j':
+      //   return { key: selectedKey, type: ActionType.MoveCardDown }
+      // case 'k':
+      //   return { key: selectedKey, type: ActionType.MoveCardUp }
       case 'c':
         return { key: selectedKey, type: ActionType.Archive }
       case 'u':
