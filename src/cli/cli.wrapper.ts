@@ -26,6 +26,15 @@ export class CliWrapper implements ICliWrapper {
     // term.fullscreen(true)
   }
 
+  public async readFromSTDIN(): Promise<string> {
+    term('Please enter your name: ')
+
+    const input = await term.inputField({}).promise
+
+    term.green("\nYour name is '%s'\n", input)
+    return input
+  }
+
   public startColumnMenu(items: string[]): Promise<SingleColumnMenuResponse> {
     return new Promise((resolve, reject) => {
       term.singleColumnMenu(

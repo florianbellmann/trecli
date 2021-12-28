@@ -39,7 +39,7 @@ export class App implements IApp {
       const singleColumnMenuResponse = await this._cliWrapper.startColumnMenu(
         this._storageProvider.getCurrentCards().map((card) => `${card.due}\t\t\t || ${card.name} >> ${card.desc}`)
       )
-      console.log(`key`, singleColumnMenuResponse)
+      // console.log(`key`, singleColumnMenuResponse)
       if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '') {
         const action = this._actionHandler.getActionByKey(singleColumnMenuResponse.key)
         // this._actionHandler.executeAction(action)
@@ -54,22 +54,13 @@ export class App implements IApp {
             await this._trelloConnector.unArchiveCard(actionCard)
             break
           case ActionType.ChangeTitle:
-            // TODO read from stdin
-            const newTitle = 'New Title'
+            const newTitle = await this._cliWrapper.readFromSTDIN()
             await this._trelloConnector.changeTitle(newTitle)
             break
           case ActionType.NewCard:
-            // var rl = readline.createInterface({
-            //   input: process.stdin,
-            //   output: process.stdout
-            // })
-
-            // rl.on('line', function (line) {
-            //   console.log(line)
-            // })
-            // TODO read from stdin
-            const newName = 'New Card'
-            await this._trelloConnector.newCard(newName, this._storageProvider.getCurrentList().id, 'new desc')
+            const newName = await this._cliWrapper.readFromSTDIN()
+            // TODO: make this interactive with desc and due date setting
+            await this._trelloConnector.newCard(newName, this._storageProvider.getCurrentList().id)
             break
           case ActionType.SwitchBoard:
             await this._trelloConnector.switchBoard()
@@ -81,13 +72,14 @@ export class App implements IApp {
             await this._trelloConnector.switchListLeft()
             break
           case ActionType.MoveCardDown:
-            const currentCards = this._storageProvider.getCurrentCards()
-            const currentCard = this._storageProvider.getCurrentCard()
-            const currentCardIndex = currentCards.findIndex((card) => card.id === currentCard.id)
-            const nextCard = currentCards[currentCardIndex + 1]
-            if (nextCard != null) {
-              await this._trelloConnector.cardDown(currentCard, nextCard.pos + 1)
-            }
+            // TODO: readd this while refactoring
+            // const currentCards = this._storageProvider.getCurrentCards()
+            // const currentCard = this._storageProvider.getCurrentCard()
+            // const currentCardIndex = currentCards.findIndex((card) => card.id === currentCard.id)
+            // const nextCard = currentCards[currentCardIndex + 1]
+            // if (nextCard != null) {
+            //   await this._trelloConnector.cardDown(currentCard, nextCard.pos + 1)
+            // }
             break
           case ActionType.MoveCardUp:
             // TODO: readd this while refactoring
@@ -99,6 +91,13 @@ export class App implements IApp {
             //   await this._trelloConnector.cardDown(currentCard, prevCard.pos + 1)
             //   await this._trelloConnector.cardUp(currentCard, prevCard.pos - 1)
             // }
+            break
+          case ActionType.DoTomorrow:
+            // TODO implement
+            break
+          case ActionType.ChangeDescription:
+            // TODO read from stdin
+
             break
           default:
             break
