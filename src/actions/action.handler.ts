@@ -18,7 +18,10 @@ export enum ActionType {
 
   NewCard,
 
-  SwitchBoard
+  SwitchBoard,
+  DoTomorrow,
+
+  ChangeDescription
 }
 
 export interface IActionProvider {
@@ -36,16 +39,20 @@ export class ActionHandler implements IActionProvider {
       case 'h':
         return { key: selectedKey, type: ActionType.SwitchListLeft }
       // TODO: implement these
-      // case 'j':
+      // case 'J':
       //   return { key: selectedKey, type: ActionType.MoveCardDown }
-      // case 'k':
+      // case 'K':
       //   return { key: selectedKey, type: ActionType.MoveCardUp }
+      case 'L':
+        return { key: selectedKey, type: ActionType.DoTomorrow }
       case 'c':
         return { key: selectedKey, type: ActionType.Archive }
       case 'u':
         return { key: selectedKey, type: ActionType.Unarchive }
       case 't':
         return { key: selectedKey, type: ActionType.ChangeTitle }
+      case 'e':
+        return { key: selectedKey, type: ActionType.ChangeDescription }
       case 'n':
         return { key: selectedKey, type: ActionType.NewCard }
       case 'w':
