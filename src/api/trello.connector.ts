@@ -61,6 +61,8 @@ export interface TrelloAPI {
 import dotenv from 'dotenv'
 import { inject, injectable } from 'inversify'
 import { GlobalStateContext } from '../data/storage.provider'
+import { getDayAfter } from '../date.helper'
+import { logger } from '../logger'
 import { TYPES } from '../types'
 dotenv.config()
 
@@ -87,7 +89,8 @@ export interface ITrelloConnector {
   openDetailViewOfCard(): Promise<void>
   switchBoard(): Promise<void>
   newCard(name: string, listId: string, desc?: string): Promise<void>
-  changeTitle(newTitle: string): Promise<void>
+  changeTitle(card: Card, newTitle: string): Promise<void>
+  changeDescription(card: Card, newDescription: string): Promise<void>
   switchListRight(): Promise<void>
   switchListLeft(): Promise<void>
   cardDown(card: Card, newPos: number): Promise<void>
@@ -163,10 +166,26 @@ export class TrelloConnector implements ITrelloConnector {
     await this._trello.addCard(name, desc, listId)
     await this.refreshCurrentList()
   }
-  public async changeTitle(newTitle: string): Promise<void> {
-    await this._trello.updateCard(this._storageProvider.currentCard.id, 'title', newTitle)
+  public async changeTitle(card: Card, newTitle: string): Promise<void> {
+    await this._trello.updateCard(card.id, 'name', newTitle)
     await this.refreshCurrentList()
   }
+
+  public async changeDescription(card: Card, newDescription: string): Promise<void> {
+    await this._trello.updateCard(card.id, 'desc', newDescription)
+    await this.refreshCurrentList()
+  }
+
+  public async moveToTomorrow(card: Card): Promise<void> {
+    const tomorrowList = this._storageProvider.getCurrentLists().find((list) => list.name === 'Tomorrow')
+    if (tomorrowList != null) {
+      await this._trello.updateCard(card.id, 'idList', tomorrowList.id)
+
+      const tomorrow = getDayAfter(new Date())
+      await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+    }
+  }
+
   public async switchListRight(): Promise<void> {
     const currentLists = this._storageProvider.getCurrentLists()
     const currentList = this._storageProvider.getCurrentList()
@@ -296,13 +315,13 @@ export interface Prefs {
 }
 
 export interface List {
-  id: '60b336baa655e589729705e1'
-  name: 'header reihe 4'
-  closed: false
-  pos: 262143
+  id: string
+  name: string
+  closed: boolean
+  pos: number
   softLimit: null
-  idBoard: '5d3db4e32513418a9f7f5513'
-  subscribed: false
+  idBoard: string
+  subscribed: boolean
 }
 
 export interface Card {

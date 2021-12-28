@@ -55,7 +55,7 @@ export class App implements IApp {
             break
           case ActionType.ChangeTitle:
             const newTitle = await this._cliWrapper.readFromSTDIN()
-            await this._trelloConnector.changeTitle(newTitle)
+            await this._trelloConnector.changeTitle(actionCard, newTitle)
             break
           case ActionType.NewCard:
             const newName = await this._cliWrapper.readFromSTDIN()
@@ -93,11 +93,12 @@ export class App implements IApp {
             // }
             break
           case ActionType.DoTomorrow:
-            // TODO implement
+            await this._trelloConnector.moveToTomorrow(actionCard)
             break
           case ActionType.ChangeDescription:
-            // TODO read from stdin
-
+            const newDesc = await this._cliWrapper.readFromSTDIN()
+            // TODO: make this interactive with desc and due date setting
+            await this._trelloConnector.cha(newDesc, this._storageProvider.getCurrentList().id)
             break
           default:
             break
