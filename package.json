@@ -14,7 +14,8 @@
     "node-fetch": "^2.6.0",
     "reflect-metadata": "^0.1.13",
     "terminal-kit": "https://github.com/florianjuesten/terminal-kit.git",
-    "trello": "0.10.0"
+    "trello": "0.10.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@types/eslint": "^7.2.12",
