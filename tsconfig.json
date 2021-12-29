@@ -3,7 +3,8 @@
     "target": "es6",
     "module": "commonjs",
     "lib": [
-      "es2015"
+      "es2015",
+      "es6"
     ],
     "jsx": "react",
     "declaration": true,
@@ -20,7 +21,12 @@
     "noUnusedLocals": false,
     "strictNullChecks": false,
     "outDir": "dist",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": [
+      "reflect-metadata"
+    ],
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true
   },
   "exclude": [
     "./dist",
