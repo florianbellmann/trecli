@@ -113,8 +113,9 @@ export class TrelloConnector implements ITrelloConnector {
 
   public async archiveCard(card: Card): Promise<void> {
     // TODO: should I just make all of these calls async? So no need to await?
-    await this._trello.updateCard(card.id, 'closed', true)
-    await this.refreshCurrentList()
+    this._trello.updateCard(card.id, 'closed', true)
+    this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
+    // await this.refreshCurrentList()
   }
 
   // TODO: remove this method
@@ -168,21 +169,24 @@ export class TrelloConnector implements ITrelloConnector {
   }
   public async changeTitle(card: Card, newTitle: string): Promise<void> {
     await this._trello.updateCard(card.id, 'name', newTitle)
-    await this.refreshCurrentList()
+    this._storageProvider.getCurrentCards().find((currentCard) => currentCard.id === card.id).name = newTitle
+    // await this.refreshCurrentList()
   }
 
   public async changeDescription(card: Card, newDescription: string): Promise<void> {
     await this._trello.updateCard(card.id, 'desc', newDescription)
-    await this.refreshCurrentList()
+    this._storageProvider.getCurrentCards().find((currentCard) => currentCard.id === card.id).desc = newDescription
+    // await this.refreshCurrentList()
   }
 
   public async moveToTomorrow(card: Card): Promise<void> {
     const tomorrowList = this._storageProvider.getCurrentLists().find((list) => list.name === 'Tomorrow')
     if (tomorrowList != null) {
-      await this._trello.updateCard(card.id, 'idList', tomorrowList.id)
+      this._trello.updateCard(card.id, 'idList', tomorrowList.id)
 
-      const tomorrow = getDayAfter(new Date())
-      await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+      // const tomorrow = getDayAfter(new Date())
+      // await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+      this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
     }
   }
 

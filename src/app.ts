@@ -40,7 +40,7 @@ export class App implements IApp {
         this._storageProvider.getCurrentCards().map((card) => `${card.due}\t\t\t || ${card.name} >> ${card.desc}`)
       )
       // console.log(`key`, singleColumnMenuResponse)
-      if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '') {
+      if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '' && singleColumnMenuResponse.key !== 'q') {
         const action = this._actionHandler.getActionByKey(singleColumnMenuResponse.key)
         // this._actionHandler.executeAction(action)
 
@@ -98,7 +98,7 @@ export class App implements IApp {
           case ActionType.ChangeDescription:
             const newDesc = await this._cliWrapper.readFromSTDIN()
             // TODO: make this interactive with desc and due date setting
-            await this._trelloConnector.cha(newDesc, this._storageProvider.getCurrentList().id)
+            await this._trelloConnector.changeDescription(actionCard, newDesc)
             break
           default:
             break
