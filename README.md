@@ -33,6 +33,9 @@ The code base is still in a super early prototype-like state. Nothing to show of
 
 - Edit texts in `nvim`
 - UI Optimizations
+  - Display labels
+  - Better organising of information
+  - Prettyfy
 - Due date setting
 - Better in memory caching
 - Tmux session instead of window
