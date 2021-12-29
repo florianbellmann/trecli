@@ -184,8 +184,11 @@ export class TrelloConnector implements ITrelloConnector {
     if (tomorrowList != null) {
       this._trello.updateCard(card.id, 'idList', tomorrowList.id)
 
-      // const tomorrow = getDayAfter(new Date())
-      // await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+      if (card.due == null) {
+        const tomorrow = getDayAfter(new Date())
+        await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+      }
+
       this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
     }
   }
@@ -333,7 +336,7 @@ export interface Card {
   checkItemStates: null
   closed: boolean
   dateLastActivity: string
-  desc: string
+  desc?: string
   descData: null
   dueReminder: null
   idBoard: string
@@ -350,7 +353,7 @@ export interface Card {
   cardRole: null
   badges: Badges
   dueComplete: boolean
-  due: null
+  due?: any
   idChecklists: any[]
   idMembers: any[]
   labels: any[]
@@ -367,7 +370,6 @@ export interface Badges {
   votes: number
   viewingMemberVoted: boolean
   subscribed: boolean
-  fogbugz: string
   checkItems: number
   checkItemsChecked: number
   checkItemsEarliestDue: null

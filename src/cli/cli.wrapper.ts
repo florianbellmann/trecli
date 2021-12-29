@@ -39,10 +39,11 @@ export class CliWrapper implements ICliWrapper {
     return new Promise((resolve, reject) => {
       term.singleColumnMenu(
         items,
-        // {
-        //   style: term.dim
-        //   selectedStyle: term.dim.blue.bgGreen
-        // },
+        {
+          style: term.green,
+          selectedStyle: term.dim.blue.bgGreen,
+          leftPadding: '  > '
+        },
         function (error: Error, response: SingleColumnMenuResponse) {
           if (error) {
             reject(error)

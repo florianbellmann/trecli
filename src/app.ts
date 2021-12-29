@@ -1,10 +1,12 @@
-import readline from 'readline'
 import { TrelloConnector } from './api/trello.connector'
 import { inject, injectable } from 'inversify'
 import { TYPES } from './types'
 import { GlobalStateContext } from './data/storage.provider'
 import { ActionHandler, ActionType } from './actions/action.handler'
 import { CliWrapper } from './cli/cli.wrapper'
+import { terminal, truncateString, stringWidth } from 'terminal-kit'
+import { logger } from './logger'
+import { formatDateString } from './date.helper'
 
 export interface IApp {
   main(): Promise<void>
@@ -16,6 +18,68 @@ export class App implements IApp {
   @inject(TYPES.IStorageProvider) private _storageProvider: GlobalStateContext
   @inject(TYPES.IActionProvider) private _actionHandler: ActionHandler
   @inject(TYPES.ICliWrapper) private _cliWrapper: CliWrapper
+
+  getItems() {
+    let nameWidth = 0,
+      dateWidth = 0,
+      descWidth = 0
+
+    const cards = this._storageProvider.getCurrentCards()
+
+    cards.forEach((card) => {
+      const cardName = this.cleanText(card.name)
+      nameWidth = Math.max(nameWidth, cardName.length)
+      if (card.due != null) {
+        const dateText = formatDateString(card.due.toString())
+        dateWidth = Math.max(dateWidth, dateText.length)
+      }
+      if (card.desc != null) {
+        const cardDesc = this.cleanText(card.desc)
+        descWidth = Math.max(descWidth, cardDesc.length)
+      }
+    })
+
+    const items: string[] = []
+
+    cards.forEach((card) => {
+      const nameText = this.adjustStringWidth(this.cleanText(card.name), nameWidth)
+
+      let dateText = '',
+        descText = ''
+
+      if (card.due != null) {
+        dateText = formatDateString(card.due.toString())
+      }
+      dateText = this.adjustStringWidth(dateText, dateWidth)
+
+      if (card.desc != null) {
+        const cardDesc = this.cleanText(card.desc)
+        descText = this.adjustStringWidth(cardDesc, descWidth)
+      }
+
+      const itemString = `${dateText}  |  ${nameText}  |  ${descText}`
+
+      items.push(itemString)
+    })
+
+    return items
+  }
+
+  cleanText(str: string): string {
+    return str.replace(/\n/g, ' . ').replace(/\s+/g, ' ').trim()
+  }
+
+  adjustStringWidth(str: string, width: number) {
+    const strWidth = str.length
+    if (strWidth > width) {
+      return `${str.substring(0, width - 3)}…`
+    } else if (strWidth < width) {
+      return `${str}${' '.repeat(width - strWidth)}`
+    } else {
+      return str
+    }
+  }
+
   async main() {
     const initialBoard = await this._trelloConnector.getBoardByName(this._storageProvider.BOARD_NAMES[0])
     this._storageProvider.setCurrentBoard(initialBoard)
@@ -35,10 +99,9 @@ export class App implements IApp {
     let key = null
 
     while (key !== 'q') {
+      const items = this.getItems()
       // eslint-disable-next-line no-await-in-loop
-      const singleColumnMenuResponse = await this._cliWrapper.startColumnMenu(
-        this._storageProvider.getCurrentCards().map((card) => `${card.due}\t\t\t || ${card.name} >> ${card.desc}`)
-      )
+      const singleColumnMenuResponse = await this._cliWrapper.startColumnMenu(items)
       // console.log(`key`, singleColumnMenuResponse)
       if (singleColumnMenuResponse.key != null && singleColumnMenuResponse.key != '' && singleColumnMenuResponse.key !== 'q') {
         const action = this._actionHandler.getActionByKey(singleColumnMenuResponse.key)
