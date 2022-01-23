@@ -118,7 +118,7 @@ export class App implements IApp {
     return newText
   }
 
-  async main() {
+  async initAsync(): Promise<void> {
     const initialBoard = await this._trelloConnector.getBoardByName(this._storageProvider.BOARD_NAMES[0])
     this._storageProvider.setCurrentBoard(initialBoard)
 
@@ -133,6 +133,10 @@ export class App implements IApp {
 
     const initialCard = initialCards[0]
     this._storageProvider.setCurrentCard(initialCard)
+  }
+
+  async main() {
+    await this.initAsync()
 
     let key = null
 
@@ -176,6 +180,16 @@ export class App implements IApp {
             // TODO: make this interactive with desc and due date setting
             await this._trelloConnector.newCard(newName, this._storageProvider.getCurrentList().id)
             break
+          case ActionType.AppendCard:
+            const appendName = await this._cliWrapper.readFromSTDIN()
+            // TODO: make this interactive with desc and due date setting
+            await this._trelloConnector.appendCard(appendName, this._storageProvider.getCurrentList().id)
+            break
+          case ActionType.PrependCard:
+            const prependName = await this._cliWrapper.readFromSTDIN()
+            // TODO: make this interactive with desc and due date setting
+            await this._trelloConnector.prependCard(prependName, this._storageProvider.getCurrentList().id)
+            break
           case ActionType.SwitchBoard:
             await this._trelloConnector.switchBoard()
             break
@@ -186,25 +200,23 @@ export class App implements IApp {
             await this._trelloConnector.switchListLeft()
             break
           case ActionType.MoveCardDown:
-            // TODO: readd this while refactoring
-            // const currentCards = this._storageProvider.getCurrentCards()
-            // const currentCard = this._storageProvider.getCurrentCard()
-            // const currentCardIndex = currentCards.findIndex((card) => card.id === currentCard.id)
-            // const nextCard = currentCards[currentCardIndex + 1]
-            // if (nextCard != null) {
-            //   await this._trelloConnector.cardDown(currentCard, nextCard.pos + 1)
-            // }
+            const currentCardsDown = this._storageProvider.getCurrentCards()
+            const currentCardDown = currentCardsDown.find((searchCard) => searchCard.id === actionCard.id)
+            const currentCardIndexDown = currentCardsDown.findIndex((card) => card.id === currentCardDown.id)
+            const nextCard = currentCardsDown[currentCardIndexDown + 1]
+            if (nextCard != null) {
+              await this._trelloConnector.cardDown(currentCardDown, nextCard.pos + 1)
+            }
             break
           case ActionType.MoveCardUp:
-            // TODO: readd this while refactoring
-            // const currentCards = this._storageProvider.getCurrentCards()
-            // const currentCard = this._storageProvider.getCurrentCard()
-            // const currentCardIndex = currentCards.findIndex((card) => card.id === currentCard.id)
-            // const prevCard = currentCards[currentCardIndex + 1]
-            // if (nextCard != null) {
-            //   await this._trelloConnector.cardDown(currentCard, prevCard.pos + 1)
-            //   await this._trelloConnector.cardUp(currentCard, prevCard.pos - 1)
-            // }
+            const currentCardsUp = this._storageProvider.getCurrentCards()
+            const currentCardUp = currentCardsUp.find((searchCard) => searchCard.id === actionCard.id)
+            const currentCardIndexUp = currentCardsUp.findIndex((card) => card.id === currentCardUp.id)
+            const prevCard = currentCardsUp[currentCardIndexUp - 1]
+            if (prevCard != null) {
+              await this._trelloConnector.cardDown(currentCardUp, prevCard.pos - 1)
+            }
+            break
             break
           case ActionType.DoTomorrow:
             await this._trelloConnector.moveToTomorrow(actionCard)

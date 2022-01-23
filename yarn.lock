@@ -1798,7 +1798,7 @@ table@^6.0.9:
 
 "terminal-kit@https://github.com/florianjuesten/terminal-kit.git":
   version "2.2.3"
-  resolved "https://github.com/florianjuesten/terminal-kit.git#327842e7ac17e3230625d58f2687245877cf78f4"
+  resolved "https://github.com/florianjuesten/terminal-kit.git#dcaf69868f0d6952cac7d0bb81007c3887b9fa86"
   dependencies:
     "@cronvel/get-pixels" "^3.4.0"
     chroma-js "^2.1.2"

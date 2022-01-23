@@ -163,6 +163,14 @@ export class TrelloConnector implements ITrelloConnector {
     const initialCard = initialCards[0]
     this._storageProvider.setCurrentCard(initialCard)
   }
+  public async appendCard(name: string, listId: string): Promise<void> {
+    await this._trello.addCardWithExtraParams(name, { pos: 'bottom' }, listId)
+    await this.refreshCurrentList()
+  }
+  public async prependCard(name: string, listId: string): Promise<void> {
+    await this._trello.addCardWithExtraParams(name, { pos: 'top' }, listId)
+    await this.refreshCurrentList()
+  }
   public async newCard(name: string, listId: string, desc?: string): Promise<void> {
     await this._trello.addCard(name, desc, listId)
     await this.refreshCurrentList()
