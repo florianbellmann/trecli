@@ -21,7 +21,9 @@ export enum ActionType {
   SwitchBoard,
   DoTomorrow,
 
-  ChangeDescription
+  ChangeDescription,
+
+  ChangeDate
 }
 
 export interface IActionProvider {
@@ -43,6 +45,8 @@ export class ActionHandler implements IActionProvider {
       //   return { key: selectedKey, type: ActionType.MoveCardDown }
       // case 'K':
       //   return { key: selectedKey, type: ActionType.MoveCardUp }
+      case 'd':
+        return { key: selectedKey, type: ActionType.ChangeDate }
       case 'L':
         return { key: selectedKey, type: ActionType.DoTomorrow }
       case 'c':

@@ -26,10 +26,10 @@ export class CliWrapper implements ICliWrapper {
     // term.fullscreen(true)
   }
 
-  public async readFromSTDIN(): Promise<string> {
-    term('Please enter your name: ')
+  public async readFromSTDIN(placeholder?: string): Promise<string> {
+    term('Please enter your input: ')
 
-    const input = await term.inputField({}).promise
+    const input = await term.inputField({ default: placeholder }).promise
 
     term.green("\nYour name is '%s'\n", input)
     return input

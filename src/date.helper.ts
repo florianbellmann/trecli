@@ -54,5 +54,13 @@ export const formatDateString = (date: string): string => {
   const day = dateObj.getDate()
   const month = dateObj.getMonth() + 1
   const year = dateObj.getFullYear()
-  return `${day}.${month}.${year}`
+  return `${year}/${month}/${day}`
+}
+
+export const dateStringToDate = (dateString: string): Date => {
+  const dateParts = dateString.split('/')
+  const year = parseInt(dateParts[0])
+  const month = parseInt(dateParts[1]) - 1
+  const day = parseInt(dateParts[2])
+  return new Date(year, month, day)
 }

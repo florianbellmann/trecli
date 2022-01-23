@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-function */
 import { TrelloConnector } from './api/trello.connector'
 import { inject, injectable } from 'inversify'
 import { TYPES } from './types'
@@ -6,7 +7,10 @@ import { ActionHandler, ActionType } from './actions/action.handler'
 import { CliWrapper } from './cli/cli.wrapper'
 import { terminal, truncateString, stringWidth } from 'terminal-kit'
 import { logger } from './logger'
-import { formatDateString } from './date.helper'
+import { dateStringToDate, formatDateString } from './date.helper'
+import * as os from 'os'
+import * as path from 'path'
+import * as fs from 'fs'
 
 export interface IApp {
   main(): Promise<void>
@@ -80,6 +84,40 @@ export class App implements IApp {
     }
   }
 
+  spawnVim(filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const child_process = require('child_process')
+
+      process.stdin.setRawMode(true)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      process.stdin.on('data', (data) => {})
+      process.stdin.pause
+      const child = child_process.spawn('nvim', [filePath], { stdio: 'inherit' })
+      child.on('error', (err: any) => {
+        reject(err)
+      })
+
+      child.on('exit', (e: any, code: any) => {
+        process.stdin.resume
+        resolve(code)
+      })
+    })
+  }
+
+  async editInVim(inputText: string): Promise<string> {
+    const tempFileName = path.resolve(os.tmpdir(), `temp_${Date.now()}.md`)
+
+    fs.writeFileSync(tempFileName, inputText)
+
+    await this.spawnVim(tempFileName)
+
+    const newText = fs.readFileSync(tempFileName, 'utf8')
+
+    fs.rmSync(tempFileName)
+    return newText
+  }
+
   async main() {
     const initialBoard = await this._trelloConnector.getBoardByName(this._storageProvider.BOARD_NAMES[0])
     this._storageProvider.setCurrentBoard(initialBoard)
@@ -116,8 +154,21 @@ export class App implements IApp {
           case ActionType.Unarchive:
             await this._trelloConnector.unArchiveCard(actionCard)
             break
+          case ActionType.ChangeDate:
+            let placeholderDateString = ''
+            if (actionCard.due != null) {
+              placeholderDateString = formatDateString(actionCard.due.toString())
+            }
+
+            const newDateString = await this._cliWrapper.readFromSTDIN(placeholderDateString)
+
+            // const newDate = await this.editInVim(actionCard.due.toString())
+            await this._trelloConnector.changeDate(actionCard, dateStringToDate(newDateString))
+            break
           case ActionType.ChangeTitle:
-            const newTitle = await this._cliWrapper.readFromSTDIN()
+            const currentTitle = actionCard.name
+            const newTitle = await this.editInVim(currentTitle)
+            // const newTitle = await this._cliWrapper.readFromSTDIN(currentTitle)
             await this._trelloConnector.changeTitle(actionCard, newTitle)
             break
           case ActionType.NewCard:
@@ -159,7 +210,9 @@ export class App implements IApp {
             await this._trelloConnector.moveToTomorrow(actionCard)
             break
           case ActionType.ChangeDescription:
-            const newDesc = await this._cliWrapper.readFromSTDIN()
+            const oldDesc = actionCard.desc
+            const newDesc = await this.editInVim(oldDesc)
+            // const newDesc = await this._cliWrapper.readFromSTDIN(oldDesc)
             // TODO: make this interactive with desc and due date setting
             await this._trelloConnector.changeDescription(actionCard, newDesc)
             break

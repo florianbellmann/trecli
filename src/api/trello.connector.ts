@@ -238,6 +238,11 @@ export class TrelloConnector implements ITrelloConnector {
     const cards = await this._trello.getCardsOnList(listId)
     return cards
   }
+
+  public async changeDate(card: Card, newDate: Date): Promise<void> {
+    await this._trello.updateCard(card.id, 'due', newDate.toISOString())
+    await this.refreshCurrentList()
+  }
 }
 
 export interface Board {
