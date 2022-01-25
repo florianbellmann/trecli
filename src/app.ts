@@ -71,6 +71,8 @@ export class App implements IApp {
         labelsText = this.adjustStringWidth(card.labels.join(','), labelWidth)
       }
 
+      const itemString = `\x1b[31m${dateText}\x1b[0m  | ${labelsText}  |  ${nameText}  |  ${descText}`
+
       items.push(itemString)
     })
 
