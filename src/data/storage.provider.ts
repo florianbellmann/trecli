@@ -34,7 +34,7 @@ export class GlobalStateContext implements IStorageProvider {
   public BOARD_NAMES: string[]
 
   constructor() {
-    const boardNames = process.env.BOARD_NAMES || 'Private'
+    const boardNames = process.env.BOARD_NAMES
     const boardNamesArray = boardNames.split(',')
     this.BOARD_NAMES = boardNamesArray
   }

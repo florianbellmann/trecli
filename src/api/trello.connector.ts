@@ -111,11 +111,10 @@ export class TrelloConnector implements ITrelloConnector {
     this._trello = new Trello(process.env.API_KEY, process.env.API_TOKEN)
   }
 
+  //TODO: remove promises
   public async archiveCard(card: Card): Promise<void> {
-    // TODO: should I just make all of these calls async? So no need to await?
     this._trello.updateCard(card.id, 'closed', true)
     this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
-    // await this.refreshCurrentList()
   }
 
   // TODO: remove this method
@@ -133,17 +132,14 @@ export class TrelloConnector implements ITrelloConnector {
   }
 
   public async moveCardToTomorrow(): Promise<void> {
-    // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
 
+  // TODO: is this still needed?
   public async openDetailViewOfCard(): Promise<void> {
-    // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
   public async switchBoard(): Promise<void> {
-    // TODO: Implement this function
-    // re iterate startup function and restart loop
     const currentBoardIndex = this._storageProvider.BOARD_NAMES.findIndex((board) => board === this._storageProvider.getCurrentBoard().name)
     const newBoardName = this._storageProvider.BOARD_NAMES[currentBoardIndex + 1] || this._storageProvider.BOARD_NAMES[0]
 

@@ -31,7 +31,7 @@ export class CliWrapper implements ICliWrapper {
 
     const input = await term.inputField({ default: placeholder }).promise
 
-    term.green("\nYour name is '%s'\n", input)
+    term.green("\nInput is '%s'\n", input)
     return input
   }
 

@@ -26,7 +26,8 @@ export class App implements IApp {
   getItems() {
     let nameWidth = 0,
       dateWidth = 0,
-      descWidth = 0
+      descWidth = 0,
+      labelWidth = 0
 
     const cards = this._storageProvider.getCurrentCards()
 
@@ -41,6 +42,10 @@ export class App implements IApp {
         const cardDesc = this.cleanText(card.desc)
         descWidth = Math.max(descWidth, cardDesc.length)
       }
+      if (card.labels != null) {
+        const cardLabels = card.labels.map((label) => label.name).join(', ')
+        labelWidth = Math.max(labelWidth, cardLabels.length)
+      }
     })
 
     const items: string[] = []
@@ -49,7 +54,8 @@ export class App implements IApp {
       const nameText = this.adjustStringWidth(this.cleanText(card.name), nameWidth)
 
       let dateText = '',
-        descText = ''
+        descText = '',
+        labelsText = ''
 
       if (card.due != null) {
         dateText = formatDateString(card.due.toString())
@@ -61,7 +67,9 @@ export class App implements IApp {
         descText = this.adjustStringWidth(cardDesc, descWidth)
       }
 
-      const itemString = `${dateText}  |  ${nameText}  |  ${descText}`
+      if (card.labels != null) {
+        labelsText = this.adjustStringWidth(card.labels.join(','), labelWidth)
+      }
 
       items.push(itemString)
     })
@@ -177,17 +185,14 @@ export class App implements IApp {
             break
           case ActionType.NewCard:
             const newName = await this._cliWrapper.readFromSTDIN()
-            // TODO: make this interactive with desc and due date setting
             await this._trelloConnector.newCard(newName, this._storageProvider.getCurrentList().id)
             break
           case ActionType.AppendCard:
             const appendName = await this._cliWrapper.readFromSTDIN()
-            // TODO: make this interactive with desc and due date setting
             await this._trelloConnector.appendCard(appendName, this._storageProvider.getCurrentList().id)
             break
           case ActionType.PrependCard:
             const prependName = await this._cliWrapper.readFromSTDIN()
-            // TODO: make this interactive with desc and due date setting
             await this._trelloConnector.prependCard(prependName, this._storageProvider.getCurrentList().id)
             break
           case ActionType.SwitchBoard:
@@ -195,6 +200,10 @@ export class App implements IApp {
             break
           case ActionType.SwitchListRight:
             await this._trelloConnector.switchListRight()
+            break
+          case ActionType.Refresh:
+            this._cliWrapper.refresh()
+            await this.initAsync()
             break
           case ActionType.SwitchListLeft:
             await this._trelloConnector.switchListLeft()
