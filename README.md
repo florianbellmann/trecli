@@ -13,13 +13,19 @@ The project is still in a very early stage but is able to read trello informatio
 - Unarchive Card
 - Switch Board
 - New Card
-- Change title
-- Change description
+- Change title (in vim)
+- Change description (in vim)
+- Change due date
 - Move card to tomorrow
+
+## Tmux integration
+
+Use the `run.zsh` to run trecli in a tmux window. `bind-key -r C-e run-shell "tmux neww -n trecli PATH/TO/TRECLI/run.zsh"`
 
 ## Optimizations
 
-The code base is still in a super early prototype-like state. Nothing to show off with or that is in a good quality state.
+The code base is still in a **super early prototype-like state**. Nothing to show off with or that is in a good quality state.
+
 ## Roadmap
 
 ### Basics
@@ -31,15 +37,13 @@ The code base is still in a super early prototype-like state. Nothing to show of
 
 ### Features
 
-- Edit texts in `nvim`
 - UI Optimizations
-  - Display labels
-  - Better organising of information
-  - Prettyfy
-- Due date setting
+  - Better organizing of information
+  - Prettify
 - Better in memory caching
-- Tmux session instead of window
-- Accumulated view of all tasks on all boards
-- Move cards up and down
-- Optional: Export concatenated card to `nvim`/clipboard for further processing in other programs
+- Lazy loading for even faster creation of cards
+- search for card. then edit in vim? or edit in single column
 
+- Accumulated view of all tasks on all boards
+
+- Open board depending on the weekday/time of day/start|stop global variable

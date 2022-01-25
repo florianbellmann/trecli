@@ -26,12 +26,12 @@ export class CliWrapper implements ICliWrapper {
     // term.fullscreen(true)
   }
 
-  public async readFromSTDIN(): Promise<string> {
-    term('Please enter your name: ')
+  public async readFromSTDIN(placeholder?: string): Promise<string> {
+    term('Please enter your input: ')
 
-    const input = await term.inputField({}).promise
+    const input = await term.inputField({ default: placeholder }).promise
 
-    term.green("\nYour name is '%s'\n", input)
+    term.green("\nInput is '%s'\n", input)
     return input
   }
 
@@ -39,10 +39,11 @@ export class CliWrapper implements ICliWrapper {
     return new Promise((resolve, reject) => {
       term.singleColumnMenu(
         items,
-        // {
-        //   style: term.dim
-        //   selectedStyle: term.dim.blue.bgGreen
-        // },
+        {
+          style: term.green,
+          selectedStyle: term.dim.blue.bgGreen,
+          leftPadding: '  > '
+        },
         function (error: Error, response: SingleColumnMenuResponse) {
           if (error) {
             reject(error)

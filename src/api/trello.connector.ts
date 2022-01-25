@@ -111,11 +111,10 @@ export class TrelloConnector implements ITrelloConnector {
     this._trello = new Trello(process.env.API_KEY, process.env.API_TOKEN)
   }
 
+  //TODO: remove promises
   public async archiveCard(card: Card): Promise<void> {
-    // TODO: should I just make all of these calls async? So no need to await?
     this._trello.updateCard(card.id, 'closed', true)
     this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
-    // await this.refreshCurrentList()
   }
 
   // TODO: remove this method
@@ -133,17 +132,14 @@ export class TrelloConnector implements ITrelloConnector {
   }
 
   public async moveCardToTomorrow(): Promise<void> {
-    // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
 
+  // TODO: is this still needed?
   public async openDetailViewOfCard(): Promise<void> {
-    // TODO: Implement this function
     throw new Error('Method not implemented.')
   }
   public async switchBoard(): Promise<void> {
-    // TODO: Implement this function
-    // re iterate startup function and restart loop
     const currentBoardIndex = this._storageProvider.BOARD_NAMES.findIndex((board) => board === this._storageProvider.getCurrentBoard().name)
     const newBoardName = this._storageProvider.BOARD_NAMES[currentBoardIndex + 1] || this._storageProvider.BOARD_NAMES[0]
 
@@ -162,6 +158,14 @@ export class TrelloConnector implements ITrelloConnector {
 
     const initialCard = initialCards[0]
     this._storageProvider.setCurrentCard(initialCard)
+  }
+  public async appendCard(name: string, listId: string): Promise<void> {
+    await this._trello.addCardWithExtraParams(name, { pos: 'bottom' }, listId)
+    await this.refreshCurrentList()
+  }
+  public async prependCard(name: string, listId: string): Promise<void> {
+    await this._trello.addCardWithExtraParams(name, { pos: 'top' }, listId)
+    await this.refreshCurrentList()
   }
   public async newCard(name: string, listId: string, desc?: string): Promise<void> {
     await this._trello.addCard(name, desc, listId)
@@ -184,8 +188,11 @@ export class TrelloConnector implements ITrelloConnector {
     if (tomorrowList != null) {
       this._trello.updateCard(card.id, 'idList', tomorrowList.id)
 
-      // const tomorrow = getDayAfter(new Date())
-      // await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+      if (card.due == null) {
+        const tomorrow = getDayAfter(new Date())
+        await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+      }
+
       this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
     }
   }
@@ -234,6 +241,11 @@ export class TrelloConnector implements ITrelloConnector {
   public async getCardsOnList(listId: string): Promise<Card[]> {
     const cards = await this._trello.getCardsOnList(listId)
     return cards
+  }
+
+  public async changeDate(card: Card, newDate: Date): Promise<void> {
+    await this._trello.updateCard(card.id, 'due', newDate.toISOString())
+    await this.refreshCurrentList()
   }
 }
 
@@ -333,7 +345,7 @@ export interface Card {
   checkItemStates: null
   closed: boolean
   dateLastActivity: string
-  desc: string
+  desc?: string
   descData: null
   dueReminder: null
   idBoard: string
@@ -350,7 +362,7 @@ export interface Card {
   cardRole: null
   badges: Badges
   dueComplete: boolean
-  due: null
+  due?: any
   idChecklists: any[]
   idMembers: any[]
   labels: any[]
@@ -367,7 +379,6 @@ export interface Badges {
   votes: number
   viewingMemberVoted: boolean
   subscribed: boolean
-  fogbugz: string
   checkItems: number
   checkItemsChecked: number
   checkItemsEarliestDue: null

@@ -48,3 +48,19 @@ export const getWeekNumber = (date: Date) => {
   // Return array of year and week number
   return [date.getUTCFullYear(), weekNo]
 }
+
+export const formatDateString = (date: string): string => {
+  const dateObj = new Date(date)
+  const day = dateObj.getDate()
+  const month = dateObj.getMonth() + 1
+  const year = dateObj.getFullYear()
+  return `${year}/${month}/${day}`
+}
+
+export const dateStringToDate = (dateString: string): Date => {
+  const dateParts = dateString.split('/')
+  const year = parseInt(dateParts[0])
+  const month = parseInt(dateParts[1]) - 1
+  const day = parseInt(dateParts[2])
+  return new Date(year, month, day)
+}
