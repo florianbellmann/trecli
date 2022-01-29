@@ -26,6 +26,10 @@ export class CliWrapper implements ICliWrapper {
     // term.fullscreen(true)
   }
 
+  public getTermWidth(): number {
+    return term.width
+  }
+
   public async readFromSTDIN(placeholder?: string): Promise<string> {
     term('Please enter your input: ')
 
@@ -41,8 +45,8 @@ export class CliWrapper implements ICliWrapper {
         items,
         {
           style: term.green,
-          selectedStyle: term.dim.blue.bgGreen,
-          leftPadding: '  > '
+          selectedStyle: term.dim.blue.bgBlack,
+          leftPadding: ' > '
         },
         function (error: Error, response: SingleColumnMenuResponse) {
           if (error) {
