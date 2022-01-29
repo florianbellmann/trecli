@@ -5,7 +5,6 @@ import { TYPES } from './types'
 import { GlobalStateContext } from './data/storage.provider'
 import { ActionHandler, ActionType } from './actions/action.handler'
 import { CliWrapper } from './cli/cli.wrapper'
-import { terminal, truncateString, stringWidth } from 'terminal-kit'
 import { logger } from './logger'
 import { dateStringToDate, formatDateString } from './date.helper'
 import * as os from 'os'
@@ -22,6 +21,17 @@ export class App implements IApp {
   @inject(TYPES.IStorageProvider) private _storageProvider: GlobalStateContext
   @inject(TYPES.IActionProvider) private _actionHandler: ActionHandler
   @inject(TYPES.ICliWrapper) private _cliWrapper: CliWrapper
+
+  getTerminalRestrictions(): { dateMaxWidth: number; labelMaxWidth: number; titleMaxWidth: number; descMaxWidth: number } {
+    const termWidth = this._cliWrapper.getTermWidth()
+
+    const dateMaxWidth = Math.floor(termWidth * 0.15)
+    const labelMaxWidth = Math.floor(termWidth * 0.15)
+    const titleMaxWidth = Math.floor(termWidth * 0.4)
+    const descMaxWidth = Math.floor(termWidth * 0.4)
+
+    return { dateMaxWidth, labelMaxWidth, titleMaxWidth, descMaxWidth }
+  }
 
   getItems() {
     let nameWidth = 0,
@@ -68,10 +78,9 @@ export class App implements IApp {
       }
 
       if (card.labels != null) {
-        labelsText = this.adjustStringWidth(card.labels.join(','), labelWidth)
+        labelsText = this.adjustStringWidth(card.labels.map((l) => l.name).join(', '), labelWidth)
       }
-
-      const itemString = `\x1b[31m${dateText}\x1b[0m  | ${labelsText}  |  ${nameText}  |  ${descText}`
+      const itemString = this.getItemString(dateText, labelsText, nameText, descText)
 
       items.push(itemString)
     })
@@ -79,8 +88,90 @@ export class App implements IApp {
     return items
   }
 
+  getItemString(dateText: string, labelText: string, nameText: string, descText: string): string {
+    function paintBright(text: string) {
+      return `\x1b[1m${text}\x1b[0m`
+    }
+    function paintDim(text: string) {
+      return `\x1b[2m${text}\x1b[0m`
+    }
+    function paintUnderscore(text: string) {
+      return `\x1b[4m${text}\x1b[0m`
+    }
+    function paintBlink(text: string) {
+      return `\x1b[5m${text}\x1b[0m`
+    }
+    function paintReverse(text: string) {
+      return `\x1b[7m${text}\x1b[0m`
+    }
+    function paintHidden(text: string) {
+      return `\x1b[8m${text}\x1b[0m`
+    }
+    function paintFgBlack(text: string) {
+      return `\x1b[30m${text}\x1b[0m`
+    }
+    function paintFgRed(text: string) {
+      return `\x1b[31m${text}\x1b[0m`
+    }
+    function paintFgGreen(text: string) {
+      return `\x1b[32m${text}\x1b[0m`
+    }
+    function paintFgYellow(text: string) {
+      return `\x1b[33m${text}\x1b[0m`
+    }
+    function paintFgBlue(text: string) {
+      return `\x1b[34m${text}\x1b[0m`
+    }
+    function paintFgMagenta(text: string) {
+      return `\x1b[35m${text}\x1b[0m`
+    }
+    function paintFgCyan(text: string) {
+      return `\x1b[36m${text}\x1b[0m`
+    }
+    function paintFgWhite(text: string) {
+      return `\x1b[37m${text}\x1b[0m`
+    }
+    function paintBgBlack(text: string) {
+      return `\x1b[40m${text}\x1b[0m`
+    }
+    function paintBgRed(text: string) {
+      return `\x1b[41m${text}\x1b[0m`
+    }
+    function paintBgGreen(text: string) {
+      return `\x1b[42m${text}\x1b[0m`
+    }
+    function paintBgYellow(text: string) {
+      return `\x1b[43m${text}\x1b[0m`
+    }
+    function paintBgBlue(text: string) {
+      return `\x1b[44m${text}\x1b[0m`
+    }
+    function paintBgMagenta(text: string) {
+      return `\x1b[45m${text}\x1b[0m`
+    }
+    function paintBgCyan(text: string) {
+      return `\x1b[46m${text}\x1b[0m`
+    }
+    function BgWhite(text: string) {
+      return `\x1b[47m${text}\x1b[0m`
+    }
+
+    const { dateMaxWidth, descMaxWidth, labelMaxWidth, titleMaxWidth } = this.getTerminalRestrictions()
+
+    const finalDateText = paintFgRed(dateText.length > dateMaxWidth ? `${dateText.substring(0, dateMaxWidth - 3)}...` : dateText),
+      finalLabelText = paintFgBlue(labelText.length > labelMaxWidth ? `${labelText.substring(0, labelMaxWidth - 3)}...` : labelText),
+      finalNameText = paintFgGreen(nameText.length > titleMaxWidth ? `${nameText.substring(0, titleMaxWidth)}` : nameText),
+      finalDescText = paintFgYellow(descText.length > descMaxWidth ? `${descText.substring(0, descMaxWidth - 3)}...` : descText)
+
+    const itemString = `${finalDateText} ${paintFgGreen('|')} ${finalLabelText} ${paintFgGreen('|')} ${finalNameText} ${paintFgGreen('|')} ${finalDescText}`
+
+    return itemString
+  }
+
   cleanText(str: string): string {
-    return str.replace(/\n/g, ' . ').replace(/\s+/g, ' ').trim()
+    const cleanString = `${str.replace(/\n/g, '').replace(/\r/g, '').replace(/\s+/g, ' ').trim().substring(0, 50)}`
+    const result = str.length > 50 ? `${cleanString}...` : cleanString
+    return result
   }
 
   adjustStringWidth(str: string, width: number) {

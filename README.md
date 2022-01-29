@@ -37,9 +37,8 @@ The code base is still in a **super early prototype-like state**. Nothing to sho
 
 ### Features
 
-- UI Optimizations
-  - Better organizing of information
-  - Prettify
+- Add labels
+- Comfort functions
 - Better in memory caching
 - Lazy loading for even faster creation of cards
 - search for card. then edit in vim? or edit in single column
