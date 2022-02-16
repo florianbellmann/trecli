@@ -11,6 +11,72 @@ import * as os from 'os'
 import * as path from 'path'
 import * as fs from 'fs'
 
+function paintBright(text: string) {
+  return `\x1b[1m${text}\x1b[0m`
+}
+function paintDim(text: string) {
+  return `\x1b[2m${text}\x1b[0m`
+}
+function paintUnderscore(text: string) {
+  return `\x1b[4m${text}\x1b[0m`
+}
+function paintBlink(text: string) {
+  return `\x1b[5m${text}\x1b[0m`
+}
+function paintReverse(text: string) {
+  return `\x1b[7m${text}\x1b[0m`
+}
+function paintHidden(text: string) {
+  return `\x1b[8m${text}\x1b[0m`
+}
+function paintFgBlack(text: string) {
+  return `\x1b[30m${text}\x1b[0m`
+}
+function paintFgRed(text: string) {
+  return `\x1b[31m${text}\x1b[0m`
+}
+function paintFgGreen(text: string) {
+  return `\x1b[32m${text}\x1b[0m`
+}
+function paintFgYellow(text: string) {
+  return `\x1b[33m${text}\x1b[0m`
+}
+function paintFgBlue(text: string) {
+  return `\x1b[34m${text}\x1b[0m`
+}
+function paintFgMagenta(text: string) {
+  return `\x1b[35m${text}\x1b[0m`
+}
+function paintFgCyan(text: string) {
+  return `\x1b[36m${text}\x1b[0m`
+}
+function paintFgWhite(text: string) {
+  return `\x1b[37m${text}\x1b[0m`
+}
+function paintBgBlack(text: string) {
+  return `\x1b[40m${text}\x1b[0m`
+}
+function paintBgRed(text: string) {
+  return `\x1b[41m${text}\x1b[0m`
+}
+function paintBgGreen(text: string) {
+  return `\x1b[42m${text}\x1b[0m`
+}
+function paintBgYellow(text: string) {
+  return `\x1b[43m${text}\x1b[0m`
+}
+function paintBgBlue(text: string) {
+  return `\x1b[44m${text}\x1b[0m`
+}
+function paintBgMagenta(text: string) {
+  return `\x1b[45m${text}\x1b[0m`
+}
+function paintBgCyan(text: string) {
+  return `\x1b[46m${text}\x1b[0m`
+}
+function BgWhite(text: string) {
+  return `\x1b[47m${text}\x1b[0m`
+}
 export interface IApp {
   main(): Promise<void>
 }
@@ -85,77 +151,14 @@ export class App implements IApp {
       items.push(itemString)
     })
 
+    const currentList = await (await this._storageProvider.getCurrentList()).name
+    const currentBoard = await (await this._storageProvider.getCurrentBoard()).name
+    items.push('')
+    items.push(`${paintFgGreen('[')}${paintFgYellow(currentBoard)}${paintFgGreen(']')}>${paintFgYellow(currentList)}`)
     return items
   }
 
   getItemString(dateText: string, labelText: string, nameText: string, descText: string): string {
-    function paintBright(text: string) {
-      return `\x1b[1m${text}\x1b[0m`
-    }
-    function paintDim(text: string) {
-      return `\x1b[2m${text}\x1b[0m`
-    }
-    function paintUnderscore(text: string) {
-      return `\x1b[4m${text}\x1b[0m`
-    }
-    function paintBlink(text: string) {
-      return `\x1b[5m${text}\x1b[0m`
-    }
-    function paintReverse(text: string) {
-      return `\x1b[7m${text}\x1b[0m`
-    }
-    function paintHidden(text: string) {
-      return `\x1b[8m${text}\x1b[0m`
-    }
-    function paintFgBlack(text: string) {
-      return `\x1b[30m${text}\x1b[0m`
-    }
-    function paintFgRed(text: string) {
-      return `\x1b[31m${text}\x1b[0m`
-    }
-    function paintFgGreen(text: string) {
-      return `\x1b[32m${text}\x1b[0m`
-    }
-    function paintFgYellow(text: string) {
-      return `\x1b[33m${text}\x1b[0m`
-    }
-    function paintFgBlue(text: string) {
-      return `\x1b[34m${text}\x1b[0m`
-    }
-    function paintFgMagenta(text: string) {
-      return `\x1b[35m${text}\x1b[0m`
-    }
-    function paintFgCyan(text: string) {
-      return `\x1b[36m${text}\x1b[0m`
-    }
-    function paintFgWhite(text: string) {
-      return `\x1b[37m${text}\x1b[0m`
-    }
-    function paintBgBlack(text: string) {
-      return `\x1b[40m${text}\x1b[0m`
-    }
-    function paintBgRed(text: string) {
-      return `\x1b[41m${text}\x1b[0m`
-    }
-    function paintBgGreen(text: string) {
-      return `\x1b[42m${text}\x1b[0m`
-    }
-    function paintBgYellow(text: string) {
-      return `\x1b[43m${text}\x1b[0m`
-    }
-    function paintBgBlue(text: string) {
-      return `\x1b[44m${text}\x1b[0m`
-    }
-    function paintBgMagenta(text: string) {
-      return `\x1b[45m${text}\x1b[0m`
-    }
-    function paintBgCyan(text: string) {
-      return `\x1b[46m${text}\x1b[0m`
-    }
-    function BgWhite(text: string) {
-      return `\x1b[47m${text}\x1b[0m`
-    }
-
     const { dateMaxWidth, descMaxWidth, labelMaxWidth, titleMaxWidth } = this.getTerminalRestrictions()
 
     const finalDateText = paintFgRed(dateText.length > dateMaxWidth ? `${dateText.substring(0, dateMaxWidth - 3)}...` : dateText),
@@ -226,8 +229,19 @@ export class App implements IApp {
     }
   }
 
+  private getInitialBoardName(): string {
+    const dayOfWeek = new Date().getDay()
+    const dayTime = new Date().getHours()
+
+    if (dayOfWeek === 0 || dayOfWeek === 6 || dayTime < 8 || dayTime > 18) {
+      return this._storageProvider.BOARD_NAMES[0] //private stuff
+    }
+
+    return this._storageProvider.BOARD_NAMES[1] //work stuff
+  }
+
   async initAsync(): Promise<void> {
-    const initialBoard = await this._trelloConnector.getBoardByName(this._storageProvider.BOARD_NAMES[0])
+    const initialBoard = await this._trelloConnector.getBoardByName(this.getInitialBoardName())
     await this._storageProvider.setCurrentBoard(initialBoard)
 
     const initialLists = await this._trelloConnector.getListsOnBoard(initialBoard.id)
