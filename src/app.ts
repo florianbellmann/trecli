@@ -89,12 +89,12 @@ export class App implements IApp {
   @inject(TYPES.ICliWrapper) private _cliWrapper: CliWrapper
 
   getTerminalRestrictions(): { dateMaxWidth: number; labelMaxWidth: number; titleMaxWidth: number; descMaxWidth: number } {
-    const termWidth = this._cliWrapper.getTermWidth()
+    const termWidth = this._cliWrapper.getTermWidth() * 1.4
 
     const dateMaxWidth = Math.floor(termWidth * 0.15)
     const labelMaxWidth = Math.floor(termWidth * 0.15)
     const titleMaxWidth = Math.floor(termWidth * 0.4)
-    const descMaxWidth = Math.floor(termWidth * 0.4)
+    const descMaxWidth = termWidth - dateMaxWidth - labelMaxWidth - titleMaxWidth - 10
 
     return { dateMaxWidth, labelMaxWidth, titleMaxWidth, descMaxWidth }
   }
@@ -172,8 +172,8 @@ export class App implements IApp {
   }
 
   cleanText(str: string): string {
-    const cleanString = `${str.replace(/\n/g, '').replace(/\r/g, '').replace(/\s+/g, ' ').trim().substring(0, 50)}`
-    const result = str.length > 50 ? `${cleanString}...` : cleanString
+    const cleanString = `${str.replace(/\n/g, '').replace(/\r/g, '').replace(/\s+/g, ' ').trim().substring(0, 100)}`
+    const result = str.length > 100 ? `${cleanString}...` : cleanString
     return result
   }
 

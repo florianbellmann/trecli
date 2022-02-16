@@ -113,8 +113,12 @@ export class TrelloConnector implements ITrelloConnector {
 
   //TODO: remove promises
   public async archiveCard(card: Card): Promise<void> {
-    this._trello.updateCard(card.id, 'closed', true)
-    this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
+    try {
+      this._trello.updateCard(card.id, 'closed', true)
+      await this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // TODO: remove this method
@@ -127,8 +131,12 @@ export class TrelloConnector implements ITrelloConnector {
   }
 
   public async unArchiveCard(card: Card): Promise<void> {
-    await this._trello.updateCard(card.id, 'closed', false)
-    await this.refreshCurrentList()
+    try {
+      await this._trello.updateCard(card.id, 'closed', false)
+      await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   public async moveCardToTomorrow(): Promise<void> {
@@ -161,41 +169,65 @@ export class TrelloConnector implements ITrelloConnector {
     await this._storageProvider.setCurrentCard(initialCard)
   }
   public async appendCard(name: string, listId: string): Promise<void> {
-    await this._trello.addCardWithExtraParams(name, { pos: 'bottom' }, listId)
-    await this.refreshCurrentList()
+    try {
+      await this._trello.addCardWithExtraParams(name, { pos: 'bottom' }, listId)
+      await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
   public async prependCard(name: string, listId: string): Promise<void> {
-    await this._trello.addCardWithExtraParams(name, { pos: 'top' }, listId)
-    await this.refreshCurrentList()
+    try {
+      await this._trello.addCardWithExtraParams(name, { pos: 'top' }, listId)
+      await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
   public async newCard(name: string, listId: string, desc?: string): Promise<void> {
-    await this._trello.addCard(name, desc, listId)
-    await this.refreshCurrentList()
+    try {
+      await this._trello.addCard(name, desc, listId)
+      await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   public async changeTitle(card: Card, newTitle: string): Promise<void> {
-    await this._trello.updateCard(card.id, 'name', newTitle)
-    ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).name = newTitle
-    // await this.refreshCurrentList()
+    try {
+      await this._trello.updateCard(card.id, 'name', newTitle)
+      ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).name = newTitle
+      // await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   public async changeDescription(card: Card, newDescription: string): Promise<void> {
-    await this._trello.updateCard(card.id, 'desc', newDescription)
-    ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).desc = newDescription
-    // await this.refreshCurrentList()
+    try {
+      await this._trello.updateCard(card.id, 'desc', newDescription)
+      ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).desc = newDescription
+      // await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   public async moveToTomorrow(card: Card): Promise<void> {
-    const tomorrowList = (await this._storageProvider.getCurrentLists()).find((list) => list.name === 'Tomorrow')
-    if (tomorrowList != null) {
-      this._trello.updateCard(card.id, 'idList', tomorrowList.id)
+    try {
+      const tomorrowList = (await this._storageProvider.getCurrentLists()).find((list) => list.name === 'Tomorrow')
+      if (tomorrowList != null) {
+        this._trello.updateCard(card.id, 'idList', tomorrowList.id)
 
-      if (card.due == null) {
-        const tomorrow = getDayAfter(new Date())
-        await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+        if (card.due == null) {
+          const tomorrow = getDayAfter(new Date())
+          await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
+        }
+
+        this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
       }
-
-      this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -219,35 +251,64 @@ export class TrelloConnector implements ITrelloConnector {
     await this._storageProvider.setCurrentList(newList)
     await this.refreshCurrentList()
   }
+
   public async cardDown(card: Card, newPos: number): Promise<void> {
-    await this._trello.updateCard(card.id, 'pos', newPos)
-    await this.refreshCurrentList()
+    try {
+      await this._trello.updateCard(card.id, 'pos', newPos)
+      await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
+
   public async cardUp(card: Card, newPos: number): Promise<void> {
-    await this._trello.updateCard(card.id, 'pos', newPos)
-    await this.refreshCurrentList()
+    try {
+      await this._trello.updateCard(card.id, 'pos', newPos)
+      await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   public async getListsOnBoard(boardId: string): Promise<List[]> {
-    const lists = await this._trello.getListsOnBoard(boardId)
-    return lists
+    try {
+      const lists = await this._trello.getListsOnBoard(boardId)
+      return lists
+    } catch (error) {
+      console.log(error)
+      return []
+    }
   }
 
   public async getBoardByName(boardName: string): Promise<Board> {
-    const boards = await this._trello.getBoards(process.env.MEMBER_ID)
-    const namedBoard = boards.find((b: any) => b.name == boardName)
+    try {
+      const boards = await this._trello.getBoards(process.env.MEMBER_ID)
+      const namedBoard = boards.find((b: any) => b.name == boardName)
 
-    return namedBoard as any
+      return namedBoard as any
+    } catch (error) {
+      console.log(error)
+      return null
+    }
   }
 
   public async getCardsOnList(listId: string): Promise<Card[]> {
-    const cards = await this._trello.getCardsOnList(listId)
-    return cards
+    try {
+      const cards = await this._trello.getCardsOnList(listId)
+      return cards
+    } catch (error) {
+      console.log(error)
+      return []
+    }
   }
 
   public async changeDate(card: Card, newDate: Date): Promise<void> {
-    await this._trello.updateCard(card.id, 'due', newDate.toISOString())
-    await this.refreshCurrentList()
+    try {
+      await this._trello.updateCard(card.id, 'due', newDate.toISOString())
+      await this.refreshCurrentList()
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 
