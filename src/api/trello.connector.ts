@@ -116,8 +116,9 @@ export class TrelloConnector implements ITrelloConnector {
     try {
       this._trello.updateCard(card.id, 'closed', true)
       await this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
+      await this._storageProvider.setLastCard(card)
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -135,7 +136,7 @@ export class TrelloConnector implements ITrelloConnector {
       await this._trello.updateCard(card.id, 'closed', false)
       await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -173,7 +174,7 @@ export class TrelloConnector implements ITrelloConnector {
       await this._trello.addCardWithExtraParams(name, { pos: 'bottom' }, listId)
       await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
   public async prependCard(name: string, listId: string): Promise<void> {
@@ -181,7 +182,7 @@ export class TrelloConnector implements ITrelloConnector {
       await this._trello.addCardWithExtraParams(name, { pos: 'top' }, listId)
       await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
   public async newCard(name: string, listId: string, desc?: string): Promise<void> {
@@ -189,7 +190,7 @@ export class TrelloConnector implements ITrelloConnector {
       await this._trello.addCard(name, desc, listId)
       await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -199,7 +200,7 @@ export class TrelloConnector implements ITrelloConnector {
       ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).name = newTitle
       // await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -209,7 +210,7 @@ export class TrelloConnector implements ITrelloConnector {
       ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).desc = newDescription
       // await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -227,7 +228,7 @@ export class TrelloConnector implements ITrelloConnector {
         this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
       }
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -257,7 +258,7 @@ export class TrelloConnector implements ITrelloConnector {
       await this._trello.updateCard(card.id, 'pos', newPos)
       await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -266,7 +267,7 @@ export class TrelloConnector implements ITrelloConnector {
       await this._trello.updateCard(card.id, 'pos', newPos)
       await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 
@@ -275,7 +276,7 @@ export class TrelloConnector implements ITrelloConnector {
       const lists = await this._trello.getListsOnBoard(boardId)
       return lists
     } catch (error) {
-      console.log(error)
+      logger.info(error)
       return []
     }
   }
@@ -287,7 +288,7 @@ export class TrelloConnector implements ITrelloConnector {
 
       return namedBoard as any
     } catch (error) {
-      console.log(error)
+      logger.info(error)
       return null
     }
   }
@@ -297,7 +298,7 @@ export class TrelloConnector implements ITrelloConnector {
       const cards = await this._trello.getCardsOnList(listId)
       return cards
     } catch (error) {
-      console.log(error)
+      logger.info(error)
       return []
     }
   }
@@ -307,7 +308,7 @@ export class TrelloConnector implements ITrelloConnector {
       await this._trello.updateCard(card.id, 'due', newDate.toISOString())
       await this.refreshCurrentList()
     } catch (error) {
-      console.log(error)
+      logger.info(error)
     }
   }
 }

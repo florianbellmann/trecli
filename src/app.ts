@@ -278,7 +278,8 @@ export class App implements IApp {
             await this._trelloConnector.archiveCard(actionCard)
             break
           case ActionType.Unarchive:
-            await this._trelloConnector.unArchiveCard(actionCard)
+            const lastCard = await this._storageProvider.getLastCard()
+            await this._trelloConnector.unArchiveCard(lastCard)
             break
           case ActionType.ChangeDate:
             let placeholderDateString = ''

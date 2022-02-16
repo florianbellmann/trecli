@@ -18,6 +18,9 @@ export interface IStorageProvider {
   getCurrentAction(): Promise<Action>
   setCurrentCard(card: Card): Promise<void>
   getCurrentCard(): Promise<Card>
+
+  setLastCard(card: Card): Promise<void>
+  getLastCard(): Promise<Card>
 }
 
 // TODO: rename me!
@@ -28,6 +31,7 @@ export class GlobalStateContext implements IStorageProvider {
   private currentList: List
   private currentCards: Card[]
   private currentCard: Card
+  private lastCard: Card
   private currentAction: Action
 
   // TODO: why caps?
@@ -94,7 +98,7 @@ export class GlobalStateContext implements IStorageProvider {
 
   public async setCurrentLists(lists: List[]) {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentLists') > -1
 
     if (alreadyStored) {
       this.waitandRetry(() => storage.update('currentLists', lists))
@@ -106,7 +110,7 @@ export class GlobalStateContext implements IStorageProvider {
   }
   public async getCurrentLists(): Promise<List[]> {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentLists') > -1
 
     if (alreadyStored) {
       return (await this.waitandRetry(() => storage.get('currentLists'))) as List[]
@@ -117,7 +121,7 @@ export class GlobalStateContext implements IStorageProvider {
 
   public async setCurrentList(list: List) {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentList') > -1
 
     if (alreadyStored) {
       this.waitandRetry(() => storage.update('currentList', list))
@@ -130,7 +134,7 @@ export class GlobalStateContext implements IStorageProvider {
 
   public async getCurrentList(): Promise<List> {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentList') > -1
 
     if (alreadyStored) {
       return (await this.waitandRetry(() => storage.get('currentList'))) as List
@@ -141,7 +145,7 @@ export class GlobalStateContext implements IStorageProvider {
 
   public async setCurrentCards(cards: Card[]) {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentCards') > -1
 
     if (alreadyStored) {
       this.waitandRetry(() => storage.update('currentCards', cards))
@@ -153,7 +157,7 @@ export class GlobalStateContext implements IStorageProvider {
   }
   public async getCurrentCards(): Promise<Card[]> {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentCards') > -1
 
     if (alreadyStored) {
       return (await this.waitandRetry(() => storage.get('currentCards'))) as Card[]
@@ -164,7 +168,7 @@ export class GlobalStateContext implements IStorageProvider {
 
   public async setCurrentAction(action: Action) {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentAction') > -1
 
     if (alreadyStored) {
       this.waitandRetry(() => storage.update('currentAction', action))
@@ -176,7 +180,7 @@ export class GlobalStateContext implements IStorageProvider {
   }
   public async getCurrentAction(): Promise<Action> {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentAction') > -1
 
     if (alreadyStored) {
       return (await this.waitandRetry(() => storage.get('currentAction'))) as Action
@@ -187,7 +191,7 @@ export class GlobalStateContext implements IStorageProvider {
 
   public async setCurrentCard(card: Card) {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentCard') > -1
 
     if (alreadyStored) {
       this.waitandRetry(() => storage.update('currentCard', card))
@@ -200,7 +204,7 @@ export class GlobalStateContext implements IStorageProvider {
 
   public async getCurrentCard(): Promise<Card> {
     const keys = (await this.waitandRetry(() => storage.keys())) as string[]
-    const alreadyStored = keys.indexOf('currentBoard') > -1
+    const alreadyStored = keys.indexOf('currentCard') > -1
 
     if (alreadyStored) {
       return (await this.waitandRetry(() => storage.get('currentCard'))) as Card
@@ -209,5 +213,28 @@ export class GlobalStateContext implements IStorageProvider {
     }
   }
 
+  public async setLastCard(card: Card) {
+    const keys = (await this.waitandRetry(() => storage.keys())) as string[]
+    const alreadyStored = keys.indexOf('lastCard') > -1
+
+    if (alreadyStored) {
+      this.waitandRetry(() => storage.update('lastCard', card))
+    } else {
+      this.waitandRetry(() => storage.setItem('lastCard', card))
+    }
+
+    this.lastCard = card
+  }
+
+  public async getLastCard(): Promise<Card> {
+    const keys = (await this.waitandRetry(() => storage.keys())) as string[]
+    const alreadyStored = keys.indexOf('lastCard') > -1
+
+    if (alreadyStored) {
+      return (await this.waitandRetry(() => storage.get('lastCard'))) as Card
+    } else {
+      return this.lastCard
+    }
+  }
   // TODO: Implement storing
 }
