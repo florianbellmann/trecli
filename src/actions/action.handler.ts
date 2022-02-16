@@ -27,7 +27,10 @@ export enum ActionType {
 
   ChangeDate,
 
-  Refresh
+  AddLabel,
+
+  Refresh,
+  RefreshHard
 }
 
 export interface IActionProvider {
@@ -56,6 +59,8 @@ export class ActionHandler implements IActionProvider {
         return { key: selectedKey, type: ActionType.Archive }
       case 'r':
         return { key: selectedKey, type: ActionType.Refresh }
+      case 'R':
+        return { key: selectedKey, type: ActionType.RefreshHard }
       case 'u':
         return { key: selectedKey, type: ActionType.Unarchive }
       case 't':
@@ -68,6 +73,8 @@ export class ActionHandler implements IActionProvider {
         return { key: selectedKey, type: ActionType.AppendCard }
       case 'I':
         return { key: selectedKey, type: ActionType.PrependCard }
+      case 'o':
+        return { key: selectedKey, type: ActionType.AddLabel }
       case 'w':
         return { key: selectedKey, type: ActionType.SwitchBoard }
 

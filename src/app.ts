@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable no-empty-function */
 import { TrelloConnector } from './api/trello.connector'
 import { inject, injectable } from 'inversify'
@@ -5,7 +6,6 @@ import { TYPES } from './types'
 import { GlobalStateContext } from './data/storage.provider'
 import { ActionHandler, ActionType } from './actions/action.handler'
 import { CliWrapper } from './cli/cli.wrapper'
-import { logger } from './logger'
 import { dateStringToDate, formatDateString } from './date.helper'
 import * as os from 'os'
 import * as path from 'path'
@@ -33,15 +33,15 @@ export class App implements IApp {
     return { dateMaxWidth, labelMaxWidth, titleMaxWidth, descMaxWidth }
   }
 
-  getItems() {
+  async getItems() {
     let nameWidth = 0,
       dateWidth = 0,
       descWidth = 0,
       labelWidth = 0
 
-    const cards = this._storageProvider.getCurrentCards()
+    const cards = await this._storageProvider.getCurrentCards()
 
-    cards.forEach((card) => {
+    cards.forEach((card: any) => {
       const cardName = this.cleanText(card.name)
       nameWidth = Math.max(nameWidth, cardName.length)
       if (card.due != null) {
@@ -53,7 +53,7 @@ export class App implements IApp {
         descWidth = Math.max(descWidth, cardDesc.length)
       }
       if (card.labels != null) {
-        const cardLabels = card.labels.map((label) => label.name).join(', ')
+        const cardLabels = card.labels.map((label: any) => label.name).join(', ')
         labelWidth = Math.max(labelWidth, cardLabels.length)
       }
     })
@@ -163,7 +163,7 @@ export class App implements IApp {
       finalNameText = paintFgGreen(nameText.length > titleMaxWidth ? `${nameText.substring(0, titleMaxWidth)}` : nameText),
       finalDescText = paintFgYellow(descText.length > descMaxWidth ? `${descText.substring(0, descMaxWidth - 3)}...` : descText)
 
-    const itemString = `${finalDateText} ${paintFgGreen('|')} ${finalLabelText} ${paintFgGreen('|')} ${finalNameText} ${paintFgGreen('|')} ${finalDescText}`
+    const itemString = `${finalDateText} ${paintFgGreen('')} ${finalLabelText} ${paintFgGreen('')} ${finalNameText} ${paintFgGreen('')} ${finalDescText}`
 
     return itemString
   }
@@ -219,30 +219,37 @@ export class App implements IApp {
     return newText
   }
 
+  async initSoft(): Promise<void> {
+    const currentCard = await this._storageProvider.getCurrentCard()
+    if (currentCard == null) {
+      await this.initAsync()
+    }
+  }
+
   async initAsync(): Promise<void> {
     const initialBoard = await this._trelloConnector.getBoardByName(this._storageProvider.BOARD_NAMES[0])
-    this._storageProvider.setCurrentBoard(initialBoard)
+    await this._storageProvider.setCurrentBoard(initialBoard)
 
     const initialLists = await this._trelloConnector.getListsOnBoard(initialBoard.id)
-    this._storageProvider.setCurrentLists(initialLists)
+    await this._storageProvider.setCurrentLists(initialLists)
 
     const startingList = initialLists[0]
-    this._storageProvider.setCurrentList(startingList)
+    await this._storageProvider.setCurrentList(startingList)
 
     const initialCards = await this._trelloConnector.getCardsOnList(startingList.id)
-    this._storageProvider.setCurrentCards(initialCards)
+    await this._storageProvider.setCurrentCards(initialCards)
 
     const initialCard = initialCards[0]
-    this._storageProvider.setCurrentCard(initialCard)
+    await this._storageProvider.setCurrentCard(initialCard)
   }
 
   async main() {
-    await this.initAsync()
+    await this.initSoft()
 
     let key = null
 
     while (key !== 'q') {
-      const items = this.getItems()
+      const items = await this.getItems()
       // eslint-disable-next-line no-await-in-loop
       const singleColumnMenuResponse = await this._cliWrapper.startColumnMenu(items)
       // console.log(`key`, singleColumnMenuResponse)
@@ -250,7 +257,7 @@ export class App implements IApp {
         const action = this._actionHandler.getActionByKey(singleColumnMenuResponse.key)
         // this._actionHandler.executeAction(action)
 
-        const actionCard = this._storageProvider.getCurrentCards()[singleColumnMenuResponse.selectedIndex]
+        const actionCard = (await this._storageProvider.getCurrentCards())[singleColumnMenuResponse.selectedIndex]
 
         switch (action.type) {
           case ActionType.Archive:
@@ -270,6 +277,8 @@ export class App implements IApp {
             // const newDate = await this.editInVim(actionCard.due.toString())
             await this._trelloConnector.changeDate(actionCard, dateStringToDate(newDateString))
             break
+          // case ActionType.AddLabel:
+          // const  = await this.editInVim(currentTitle)
           case ActionType.ChangeTitle:
             const currentTitle = actionCard.name
             const newTitle = await this.editInVim(currentTitle)
@@ -278,15 +287,15 @@ export class App implements IApp {
             break
           case ActionType.NewCard:
             const newName = await this._cliWrapper.readFromSTDIN()
-            await this._trelloConnector.newCard(newName, this._storageProvider.getCurrentList().id)
+            await this._trelloConnector.newCard(newName, (await this._storageProvider.getCurrentList()).id)
             break
           case ActionType.AppendCard:
             const appendName = await this._cliWrapper.readFromSTDIN()
-            await this._trelloConnector.appendCard(appendName, this._storageProvider.getCurrentList().id)
+            await this._trelloConnector.appendCard(appendName, (await this._storageProvider.getCurrentList()).id)
             break
           case ActionType.PrependCard:
             const prependName = await this._cliWrapper.readFromSTDIN()
-            await this._trelloConnector.prependCard(prependName, this._storageProvider.getCurrentList().id)
+            await this._trelloConnector.prependCard(prependName, (await this._storageProvider.getCurrentList()).id)
             break
           case ActionType.SwitchBoard:
             await this._trelloConnector.switchBoard()
@@ -296,13 +305,16 @@ export class App implements IApp {
             break
           case ActionType.Refresh:
             this._cliWrapper.refresh()
+            break
+          case ActionType.RefreshHard:
+            this._cliWrapper.refresh()
             await this.initAsync()
             break
           case ActionType.SwitchListLeft:
             await this._trelloConnector.switchListLeft()
             break
           case ActionType.MoveCardDown:
-            const currentCardsDown = this._storageProvider.getCurrentCards()
+            const currentCardsDown = await this._storageProvider.getCurrentCards()
             const currentCardDown = currentCardsDown.find((searchCard) => searchCard.id === actionCard.id)
             const currentCardIndexDown = currentCardsDown.findIndex((card) => card.id === currentCardDown.id)
             const nextCard = currentCardsDown[currentCardIndexDown + 1]
@@ -311,7 +323,7 @@ export class App implements IApp {
             }
             break
           case ActionType.MoveCardUp:
-            const currentCardsUp = this._storageProvider.getCurrentCards()
+            const currentCardsUp = await this._storageProvider.getCurrentCards()
             const currentCardUp = currentCardsUp.find((searchCard) => searchCard.id === actionCard.id)
             const currentCardIndexUp = currentCardsUp.findIndex((card) => card.id === currentCardUp.id)
             const prevCard = currentCardsUp[currentCardIndexUp - 1]

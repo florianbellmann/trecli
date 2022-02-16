@@ -37,12 +37,8 @@ The code base is still in a **super early prototype-like state**. Nothing to sho
 
 ### Features
 
-- Add labels
-- Comfort functions
+- redraw term on resize
 - Better in memory caching
-- Lazy loading for even faster creation of cards
+  - deamon for periodic fetching of contents
+  - Lazy loading for even faster creation of cards
 - search for card. then edit in vim? or edit in single column
-
-- Accumulated view of all tasks on all boards
-
-- Open board depending on the weekday/time of day/start|stop global variable

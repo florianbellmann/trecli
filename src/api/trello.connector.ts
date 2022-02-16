@@ -114,12 +114,12 @@ export class TrelloConnector implements ITrelloConnector {
   //TODO: remove promises
   public async archiveCard(card: Card): Promise<void> {
     this._trello.updateCard(card.id, 'closed', true)
-    this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
+    this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
   }
 
   // TODO: remove this method
   private async refreshCurrentList() {
-    const newCards = await this.getCardsOnList(this._storageProvider.getCurrentList().id)
+    const newCards = await this.getCardsOnList((await this._storageProvider.getCurrentList()).id)
     await this._storageProvider.setCurrentCards(newCards)
 
     const newInitCard = newCards[0]
@@ -140,24 +140,25 @@ export class TrelloConnector implements ITrelloConnector {
     throw new Error('Method not implemented.')
   }
   public async switchBoard(): Promise<void> {
-    const currentBoardIndex = this._storageProvider.BOARD_NAMES.findIndex((board) => board === this._storageProvider.getCurrentBoard().name)
+    const currentCardName = await this._storageProvider.getCurrentBoard()
+    const currentBoardIndex = await this._storageProvider.BOARD_NAMES.findIndex((board) => board === currentCardName.name)
     const newBoardName = this._storageProvider.BOARD_NAMES[currentBoardIndex + 1] || this._storageProvider.BOARD_NAMES[0]
 
     // TODO: remove this dublicate from app.ts
     const initialBoard = await this.getBoardByName(newBoardName)
-    this._storageProvider.setCurrentBoard(initialBoard)
+    await this._storageProvider.setCurrentBoard(initialBoard)
 
     const initialLists = await this.getListsOnBoard(initialBoard.id)
-    this._storageProvider.setCurrentLists(initialLists)
+    await this._storageProvider.setCurrentLists(initialLists)
 
     const startingList = initialLists[0]
-    this._storageProvider.setCurrentList(startingList)
+    await this._storageProvider.setCurrentList(startingList)
 
     const initialCards = await this.getCardsOnList(startingList.id)
-    this._storageProvider.setCurrentCards(initialCards)
+    await this._storageProvider.setCurrentCards(initialCards)
 
     const initialCard = initialCards[0]
-    this._storageProvider.setCurrentCard(initialCard)
+    await this._storageProvider.setCurrentCard(initialCard)
   }
   public async appendCard(name: string, listId: string): Promise<void> {
     await this._trello.addCardWithExtraParams(name, { pos: 'bottom' }, listId)
@@ -171,20 +172,21 @@ export class TrelloConnector implements ITrelloConnector {
     await this._trello.addCard(name, desc, listId)
     await this.refreshCurrentList()
   }
+
   public async changeTitle(card: Card, newTitle: string): Promise<void> {
     await this._trello.updateCard(card.id, 'name', newTitle)
-    this._storageProvider.getCurrentCards().find((currentCard) => currentCard.id === card.id).name = newTitle
+    ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).name = newTitle
     // await this.refreshCurrentList()
   }
 
   public async changeDescription(card: Card, newDescription: string): Promise<void> {
     await this._trello.updateCard(card.id, 'desc', newDescription)
-    this._storageProvider.getCurrentCards().find((currentCard) => currentCard.id === card.id).desc = newDescription
+    ;(await this._storageProvider.getCurrentCards()).find((currentCard: any) => currentCard.id === card.id).desc = newDescription
     // await this.refreshCurrentList()
   }
 
   public async moveToTomorrow(card: Card): Promise<void> {
-    const tomorrowList = this._storageProvider.getCurrentLists().find((list) => list.name === 'Tomorrow')
+    const tomorrowList = (await this._storageProvider.getCurrentLists()).find((list) => list.name === 'Tomorrow')
     if (tomorrowList != null) {
       this._trello.updateCard(card.id, 'idList', tomorrowList.id)
 
@@ -193,28 +195,28 @@ export class TrelloConnector implements ITrelloConnector {
         await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
       }
 
-      this._storageProvider.currentCards = this._storageProvider.currentCards.filter((currentCards) => currentCards.id !== card.id)
+      this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
     }
   }
 
   public async switchListRight(): Promise<void> {
-    const currentLists = this._storageProvider.getCurrentLists()
-    const currentList = this._storageProvider.getCurrentList()
+    const currentLists = await this._storageProvider.getCurrentLists()
+    const currentList = await this._storageProvider.getCurrentList()
     const currentListIndex = currentLists.findIndex((list) => list.id === currentList.id)
 
     const newIndex = currentListIndex + 1 >= currentLists.length ? 0 : currentListIndex + 1
     const newList = currentLists[newIndex]
-    this._storageProvider.setCurrentList(newList)
+    await this._storageProvider.setCurrentList(newList)
     await this.refreshCurrentList()
   }
   public async switchListLeft(): Promise<void> {
-    const currentLists = this._storageProvider.getCurrentLists()
-    const currentList = this._storageProvider.getCurrentList()
+    const currentLists = await this._storageProvider.getCurrentLists()
+    const currentList = await this._storageProvider.getCurrentList()
     const currentListIndex = currentLists.findIndex((list) => list.id === currentList.id)
 
     const newIndex = currentListIndex - 1 < 0 ? currentLists.length - 1 : currentListIndex - 1
     const newList = currentLists[newIndex]
-    this._storageProvider.setCurrentList(newList)
+    await this._storageProvider.setCurrentList(newList)
     await this.refreshCurrentList()
   }
   public async cardDown(card: Card, newPos: number): Promise<void> {
