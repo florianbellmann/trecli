@@ -225,7 +225,7 @@ export class TrelloConnector implements ITrelloConnector {
           await this._trello.updateCard(card.id, 'due', tomorrow.toISOString())
         }
 
-        this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
+        await this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
       }
     } catch (error) {
       logger.info(error)

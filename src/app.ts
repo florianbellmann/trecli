@@ -286,10 +286,7 @@ export class App implements IApp {
             if (actionCard.due != null) {
               placeholderDateString = formatDateString(actionCard.due.toString())
             }
-
             const newDateString = await this._cliWrapper.readFromSTDIN(placeholderDateString)
-
-            // const newDate = await this.editInVim(actionCard.due.toString())
             await this._trelloConnector.changeDate(actionCard, dateStringToDate(newDateString))
             break
           // case ActionType.AddLabel:
