@@ -232,6 +232,19 @@ export class TrelloConnector implements ITrelloConnector {
     }
   }
 
+  public async moveToToday(card: Card): Promise<void> {
+    try {
+      const todayList = (await this._storageProvider.getCurrentLists()).find((list) => list.name === 'Today')
+      if (todayList != null) {
+        this._trello.updateCard(card.id, 'idList', todayList.id)
+
+        await this._storageProvider.setCurrentCards((await this._storageProvider.getCurrentCards()).filter((currentCards) => currentCards.id !== card.id))
+      }
+    } catch (error) {
+      logger.info(error)
+    }
+  }
+
   public async switchListRight(): Promise<void> {
     const currentLists = await this._storageProvider.getCurrentLists()
     const currentList = await this._storageProvider.getCurrentList()

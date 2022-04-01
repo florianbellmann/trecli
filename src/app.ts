@@ -1,6 +1,6 @@
 /* eslint-disable complexity */
 /* eslint-disable no-empty-function */
-import { TrelloConnector } from './api/trello.connector'
+import { Card, TrelloConnector } from './api/trello.connector'
 import { inject, injectable } from 'inversify'
 import { TYPES } from './types'
 import { GlobalStateContext } from './data/storage.provider'
@@ -271,7 +271,7 @@ export class App implements IApp {
         const action = this._actionHandler.getActionByKey(singleColumnMenuResponse.key)
         // this._actionHandler.executeAction(action)
 
-        const actionCard = (await this._storageProvider.getCurrentCards())[singleColumnMenuResponse.selectedIndex]
+        const actionCard: Card = (await this._storageProvider.getCurrentCards())[singleColumnMenuResponse.selectedIndex]
 
         switch (action.type) {
           case ActionType.Archive:
@@ -290,7 +290,14 @@ export class App implements IApp {
             await this._trelloConnector.changeDate(actionCard, dateStringToDate(newDateString))
             break
           // case ActionType.AddLabel:
-          // const  = await this.editInVim(currentTitle)
+          // const labels = actionCard.idLabels
+          // console.log('labels', labels)
+
+          // const currentLabels = actionCard.labels
+          // console.log('currentLabels', currentLabels)
+          // const newLabels = await this.editInVim(currentLabels.toString())
+
+          // await this._trelloConnector.
           case ActionType.ChangeTitle:
             const currentTitle = actionCard.name
             const newTitle = await this.editInVim(currentTitle)
@@ -343,6 +350,8 @@ export class App implements IApp {
               await this._trelloConnector.cardDown(currentCardUp, prevCard.pos - 1)
             }
             break
+          case ActionType.DoToday:
+            await this._trelloConnector.moveToToday(actionCard)
             break
           case ActionType.DoTomorrow:
             await this._trelloConnector.moveToTomorrow(actionCard)
